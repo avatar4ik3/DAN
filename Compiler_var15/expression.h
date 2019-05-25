@@ -13,7 +13,6 @@ class expression
 {
 private:
 	string _expression_line;
-	//set<char> operators;
 public:
 
 	class exceptions:public exception {
@@ -30,8 +29,9 @@ public:
 	expression(const char*);
 	expression(const expression&);
 
-	~expression() {};
 
+	~expression() {};
+	const string transmute();
 	const string calculate();
 };
 

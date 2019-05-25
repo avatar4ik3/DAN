@@ -38,9 +38,9 @@ expression::expression(const expression & rh):_expression_line(rh._expression_li
 	if (a.empty())throw exceptions("empty expression");
 }
 
-const string expression::calculate() {
-
-	string 
+const string expression::transmute()
+{
+	string
 		postfix_notation,
 		tmp_line1,
 		tmp_line2;
@@ -49,7 +49,7 @@ const string expression::calculate() {
 		postfix;
 	stack<double>
 		values;
-	istringstream 
+	istringstream
 		infix_notation(_expression_line);
 	double
 		tmp_val1(NAN);
@@ -194,8 +194,8 @@ const string expression::calculate() {
 				if (tmp_line1 == "/") {
 					operands.push(tmp_line1);
 				}
-				if (tmp_line1 == "(") { 
-					operands.push(tmp_line1); 
+				if (tmp_line1 == "(") {
+					operands.push(tmp_line1);
 				}
 				if (tmp_line1 == ")") {
 					operands.pop();
@@ -203,14 +203,15 @@ const string expression::calculate() {
 			}
 			tmp_line2 = tmp_line1;
 		}
-		
-	}
 
-	//test
-	while (!postfix.empty()) {
-		cout << postfix.top() << " ";
-		postfix.pop();
 	}
-	return "123";
+	return "1,2,3"; // верну нормальное потом
+}
+
+//часть антона
+//П.С ТОоха юзай throw exceptions(string,position) для выброса исключений
+const string expression::calculate() {
+
+	
 }
 
