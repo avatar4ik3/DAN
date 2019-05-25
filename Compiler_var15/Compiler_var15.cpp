@@ -1,12 +1,25 @@
-﻿// comiler.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+﻿// Compiler_var15.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
 //
 
 #include "pch.h"
+#include<fstream>
 #include <iostream>
+#include "expression.h"
+
+using namespace std;
 
 int main()
 {
-    std::cout << "Hello World!\n"; 
+	try
+	{
+		expression a(" 1 + 2 * 3 ;");
+		a.calculate();
+		cout << "ok" <<endl;
+	}
+	catch (expression::exceptions& ex)
+	{
+		cout << ex.what() << " " << ex.getPosition();
+	}
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
