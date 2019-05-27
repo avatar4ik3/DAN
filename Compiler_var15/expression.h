@@ -11,7 +11,8 @@ using namespace std;
 const set<string> operators({ "^","~:","+","-","*","/","&","<",">","=","#","!",";","(",")","entier","frac" });
 
 //приоритеты операторов
-const set<string> priority1({ "^","~:","+","-" }); //возведение в  степень,отрицание, изменение знака переменной
+const set<string> priority0({ "+","-" });// изменение знака переменной
+const set<string> priority1({ "^","~:"}); //возведение в  степень,отрицание,
 const set<string> priority2({ "*" }); //умножение
 const set<string> priority3({ "/","&" }); //деление и конъюнкиця 
 const set<string> priority4({ "+","-" }); // бинарные сложение и вычитание
@@ -23,6 +24,8 @@ class expression
 {
 private:
 	string _expression_line;
+	queue<string> _result_queue;
+	void set_prior(string,int&, int&,bool);
 public:
 
 	class exceptions:public exception {
@@ -41,7 +44,7 @@ public:
 
 
 	~expression() {};
-	const string transmute();
+	const queue<string> transmute();
 	const string calculate();
 };
 

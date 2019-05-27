@@ -6,6 +6,32 @@ using namespace std;
 
 
 
+
+void expression::set_prior(string line, int &prior, int &assoc,bool prev_is_number)
+{
+	if (priority0.find(line) != priority0.end() && !prev_is_number) {
+		prior = 6; assoc = 2;
+	}
+	if (priority1.find(line) != priority1.end()) {
+		prior = 6; assoc = 2;
+	}
+	if (priority2.find(line) != priority2.end()) {
+		prior = 5; assoc = 1;
+	}
+	if (priority3.find(line) != priority3.end()) {
+		prior = 4; assoc = 2;
+	}
+	if (priority4.find(line) != priority4.end() && prev_is_number) {
+		prior = 3; assoc = 2;
+	}
+	if (priority5.find(line) != priority5.end()) {
+		prior = 2; assoc = 2;
+	}
+	if (priority6.find(line) != priority6.end()) {
+		prior = 1; assoc = 1;
+	}
+}
+
 expression::expression():_expression_line("")//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	throw exceptions("empty expression");
@@ -40,22 +66,25 @@ expression::expression(const expression & rh):_expression_line(rh._expression_li
 	if (a.empty())throw exceptions("empty expression");
 }
 
-const string expression::transmute()
+const queue<string> expression::transmute()
 {
 	stack<string> tokens; // это стек операндов
 	queue<string> result; // это результат в виде очереди чтобы было удобней работать 
-	string line, prev_line; // строка в которую читаем
+	string line; // строка в которую читаем
 	int prior(0), top_prior(0);//приоритеты строк
 	int assoc(0), top_assoc(0);//ассоциативноть операций 1 = правая 2 = левая
+	bool prev_is_number(false),top_prev_is_number(false); 
 	istringstream input(_expression_line);//поток из строки для удобства работы
 
-	while (!input.eof()) {
+	while (line != ";") {
 		input >> line;
+		if (input.eof() && line != ";")throw exceptions("Token ';' was expecting at the end of the expressions an expression::calculate");
 		if (line.length() >= 1 && operators.find(line) == operators.end()) {
 			try
 			{
 				stod(line.c_str());
 				result.push(line);
+				prev_is_number = true;
 			}
 			catch (const std::exception&)
 			{
@@ -64,27 +93,9 @@ const string expression::transmute()
 		}
 		else {
 			//установка приоритета текущеё операции
-			//TODO добавть учет операторов изменения знака
 			prior = 0;
 			assoc = 0;
-			if (priority1.find(line) != priority1.end()) { 
-				prior = 6; assoc = 1; 
-			}
-			if (priority2.find(line) != priority2.end()) { 
-				prior = 5; assoc = 2; 
-			}
-			if (priority3.find(line) != priority3.end()) {
-				prior = 4; assoc = 1;
-			}
-			if (priority4.find(line) != priority4.end()) {
-				prior = 3; assoc = 1;
-			}
-			if (priority5.find(line) != priority5.end()) {
-				prior = 2; assoc = 1;
-			}
-			if (priority6.find(line) != priority6.end()) {
-				prior = 1; assoc = 2;
-			}
+			this->set_prior(line, prior, assoc, prev_is_number);
 
 			//сам алгоритм
 			//если строка - число кидаем в стек ( тут он уже кинут)
@@ -125,31 +136,20 @@ const string expression::transmute()
 			//если бинарная операция
 			if (prior) { 
 				//TODO перевести строку /*tokens.top() == "entier" || tokens.top() == "frac" ||*/ в приемлимый вид
-				while (/*tokens.top() == "entier" || tokens.top() == "frac" ||*/ top_prior > prior || (top_prior == prior && top_assoc == 2)) {
+				while (/*tokens.top() == "entier" || tokens.top() == "frac" ||*/!tokens.empty() &&( top_prior > prior || (top_prior == prior && top_assoc == 2))) {
 					result.push(tokens.top());
 					tokens.pop();
 					//изменение приоритета вершины стека
-					if (priority1.find(tokens.top()) != priority1.end()) {
-						top_prior = 6; top_assoc = 1;
-					}
-					if (priority2.find(tokens.top()) != priority2.end()) {
-						top_prior = 5; top_assoc = 2;
-					}
-					if (priority3.find(tokens.top()) != priority3.end()) {
-						top_prior = 4; top_assoc = 1;
-					}
-					if (priority4.find(tokens.top()) != priority4.end()) {
-						top_prior = 3; top_assoc = 1;
-					}
-					if (priority5.find(tokens.top()) != priority5.end()) {
-						top_prior = 2; top_assoc = 1;
-					}
-					if (priority6.find(tokens.top()) != priority6.end()) {
-						top_prior = 1; top_assoc = 2;
-					}
+					if(!tokens.empty())this->set_prior(tokens.top(), top_prior, top_assoc, top_prev_is_number);
+					
 				}
 				tokens.push(line);
 			}
+			top_prior = prior;
+			top_assoc = assoc;
+			top_prev_is_number = prev_is_number;
+			prev_is_number = false;
+
 		}
 	}
 	while (!tokens.empty()) {
@@ -161,8 +161,8 @@ const string expression::transmute()
 		cout << result.front() << " ";
 		result.pop();
 	}
-
-	return "1,2,3"; // верну нормальное потом
+	this->_result_queue = result;
+	return _result_queue; // верну нормальное потом
 }
 
 //часть антона

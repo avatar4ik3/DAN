@@ -12,12 +12,12 @@ int main()
 {
 	try
 	{
-		expression a("( 1 + 2 ) * 3");
+		expression a("( - 2 & 1 ) ^ ( 1 * 3 ) ;");
 		a.transmute();
 	}
-	catch ( std::exception& ex)
+	catch ( expression::exceptions& ex)
 	{
-		cout << endl << ex.what();
+		cout << endl << ex.what() <<" after tellg " << ex.getPosition();
 	}
 }
 
