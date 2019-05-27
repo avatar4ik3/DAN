@@ -12,13 +12,12 @@ int main()
 {
 	try
 	{
-		expression a(" 1 + 2 * 3 ;");
-		a.calculate();
-		cout << "ok" <<endl;
+		expression a("1 + 2 * 3");
+		a.transmute();
 	}
-	catch (expression::exceptions& ex)
+	catch ( std::exception& ex)
 	{
-		cout << ex.what() << " " << ex.getPosition();
+		cout << endl << ex.what();
 	}
 }
 

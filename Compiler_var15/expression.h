@@ -1,14 +1,24 @@
-#pragma once
+﻿#pragma once
 #define Expression_h
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <stack>
+#include <queue>
 #include <set>
 using namespace std;
+//возможные операторы
+const set<string> operators({ "^","~:","+","-","*","/","&","<",">","=","#","!",";","(",")","entier","frac" });
 
-const set<string> operators({ "^","~:","+","-","*","/","&","<",">","=","#","!",";","(",")" });
+//приоритеты операторов
+const set<string> priority1({ "^","~:","+","-" }); //возведение в  степень,отрицание, изменение знака переменной
+const set<string> priority2({ "*" }); //умножение
+const set<string> priority3({ "/","&" }); //деление и конъюнкиця 
+const set<string> priority4({ "+","-" }); // бинарные сложение и вычитание
+const set<string> priority5({ "<",">","=","#" }); // сравнения и "не равно"(#)
+const set<string> priority6({ "!" }); //дизъюнкция
 
+//Денис: я хз почему конъюнкия(&) и дизъюнкция(!) отдельно от всех и настолько далеко и почему отрицание это тильта(и тильт тоже) (╯°□°）╯︵ ┻━┻ 
 class expression
 {
 private:

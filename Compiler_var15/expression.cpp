@@ -4,6 +4,8 @@
 #include "expression.h"
 using namespace std;
 
+
+
 expression::expression():_expression_line("")//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	throw exceptions("empty expression");
@@ -40,171 +42,134 @@ expression::expression(const expression & rh):_expression_line(rh._expression_li
 
 const string expression::transmute()
 {
-	string
-		postfix_notation,
-		tmp_line1,
-		tmp_line2;
-	stack<string>
-		operands,
-		postfix;
-	stack<double>
-		values;
-	istringstream
-		infix_notation(_expression_line);
-	double
-		tmp_val1(NAN);
-	size_t counter(0);
-	while (tmp_line2 != ";") {
-		infix_notation >> tmp_line1;
-		counter++;
-		if (tmp_line1.length() >= 1 && operators.find(tmp_line1) == operators.end()) {
+	stack<string> tokens; // это стек операндов
+	queue<string> result; // это результат в виде очереди чтобы было удобней работать 
+	string line, prev_line; // строка в которую читаем
+	int prior(0), top_prior(0);//приоритеты строк
+	int assoc(0), top_assoc(0);//ассоциативноть операций 1 = правая 2 = левая
+	istringstream input(_expression_line);//поток из строки для удобства работы
+
+	while (!input.eof()) {
+		input >> line;
+		if (line.length() >= 1 && operators.find(line) == operators.end()) {
 			try
 			{
-				tmp_val1 = stod(tmp_line1.c_str());
-				postfix.push(tmp_line1);
+				stod(line.c_str());
+				result.push(line);
 			}
 			catch (const std::exception&)
 			{
-				throw exceptions("Unexpected token at expression::calculate", counter);
+				throw exceptions("Unexpected token at expression::calculate",input.tellg());
 			}
-
 		}
 		else {
-			if (tmp_line2.empty())operands.push(tmp_line1);
-			if (tmp_line2 == ";") {//конец выражения
-				if (tmp_line1 == ";") break;//выражение получено
-				if (tmp_line1 == "+")operands.push(tmp_line1);
-				if (tmp_line1 == "-")operands.push(tmp_line1);
-				if (tmp_line1 == "*")operands.push(tmp_line1);
-				if (tmp_line1 == "/")operands.push(tmp_line1);
-				if (tmp_line1 == "(")operands.push(tmp_line1);
-				if (tmp_line1 == ")") {
-					throw exceptions("Unbalanced expression", counter);
-				}
+			//установка приоритета текущеё операции
+			//TODO добавть учет операторов изменения знака
+			prior = 0;
+			assoc = 0;
+			if (priority1.find(line) != priority1.end()) { 
+				prior = 6; assoc = 1; 
 			}
-			if (tmp_line2 == "+") {//prev +
-				if (tmp_line1 == ";") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "+") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "-") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "*")operands.push(tmp_line1);
-				if (tmp_line1 == "/")operands.push(tmp_line1);
-				if (tmp_line1 == "(")operands.push(tmp_line1);
-				if (tmp_line1 == ")") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
+			if (priority2.find(line) != priority2.end()) { 
+				prior = 5; assoc = 2; 
 			}
-			if (tmp_line2 == "-") {//prev -
-				if (tmp_line1 == ";") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "+") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "-") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "*")operands.push(tmp_line1);
-				if (tmp_line1 == "/")operands.push(tmp_line1);
-				if (tmp_line1 == "(")operands.push(tmp_line1);
-				if (tmp_line1 == ")") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
+			if (priority3.find(line) != priority3.end()) {
+				prior = 4; assoc = 1;
 			}
-			if (tmp_line2 == "*") {//prev *
-				if (tmp_line1 == ";") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "+") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "-") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "*") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "/") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "(")operands.push(tmp_line1);
-				if (tmp_line1 == ")") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
+			if (priority4.find(line) != priority4.end()) {
+				prior = 3; assoc = 1;
 			}
-			if (tmp_line2 == "/") {//prev /
-				if (tmp_line1 == ";") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "+") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "-") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "*") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "/") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
-				if (tmp_line1 == "(")operands.push(tmp_line1);
-				if (tmp_line1 == ")") {
-					postfix.push(operands.top());
-					operands.pop();
-				}
+			if (priority5.find(line) != priority5.end()) {
+				prior = 2; assoc = 1;
 			}
-			if (tmp_line2 == "(") {//prev (
-				if (tmp_line1 == ";") {
-					throw exceptions("Unbalanced expression", counter);
-				}
-				if (tmp_line1 == "+") {
-					operands.push(tmp_line1);
-				}
-				if (tmp_line1 == "-") {
-					operands.push(tmp_line1);
-				}
-				if (tmp_line1 == "*") {
-					operands.push(tmp_line1);
-				}
-				if (tmp_line1 == "/") {
-					operands.push(tmp_line1);
-				}
-				if (tmp_line1 == "(") {
-					operands.push(tmp_line1);
-				}
-				if (tmp_line1 == ")") {
-					operands.pop();
-				}
+			if (priority6.find(line) != priority6.end()) {
+				prior = 1; assoc = 2;
 			}
-			tmp_line2 = tmp_line1;
-		}
 
+			//сам алгоритм
+			//если строка - число кидаем в стек ( тут он уже кинут)
+			//если строка - постфиксная функция то кидаем в стек(тут нет постфиксных функцый)
+			//если символ - -префиксная функция то кидаем в стек
+			if (line == "entier" || line == "frac") {
+				tokens.push(line);
+			}
+			//если символ - открывающая скобка то кидаем в стек
+			if (line == "(")
+			{
+				tokens.push(line);
+			}
+			//если символ - закрывающая скобка то выталкиваем токены из стека пока не дойдем до открывающей скобки
+			if (line == ")") {
+				string tmp(tokens.top());
+				try
+				{
+					tokens.pop();
+				}
+				catch (const std::exception&)
+				{
+					throw exceptions("unbalanced expression at expression::calculate", input.tellg());
+				}
+				while (tmp != "(") {
+					result.push(tmp);
+					tmp = tokens.top();
+					try
+					{
+						tokens.pop();
+					}
+					catch (const std::exception&)
+					{
+						throw exceptions("unbalanced expression at expression::calculate", input.tellg());
+					}
+				}
+				try
+				{
+					tokens.pop();
+				}
+				catch (const std::exception&)
+				{
+					throw exceptions("unbalanced expression at expression::calculate", input.tellg());
+				}
+			}
+			//если бинарная операция
+			if (prior) { 
+				//TODO перевести строку /*tokens.top() == "entier" || tokens.top() == "frac" ||*/ в приемлимый вид
+				while (/*tokens.top() == "entier" || tokens.top() == "frac" ||*/ top_prior > prior || (top_prior == prior && top_assoc == 2)) {
+					result.push(tokens.top());
+					tokens.pop();
+					//изменение приоритета вершины стека
+					if (priority1.find(tokens.top()) != priority1.end()) {
+						top_prior = 6; top_assoc = 1;
+					}
+					if (priority2.find(tokens.top()) != priority2.end()) {
+						top_prior = 5; top_assoc = 2;
+					}
+					if (priority3.find(tokens.top()) != priority3.end()) {
+						top_prior = 4; top_assoc = 1;
+					}
+					if (priority4.find(tokens.top()) != priority4.end()) {
+						top_prior = 3; top_assoc = 1;
+					}
+					if (priority5.find(tokens.top()) != priority5.end()) {
+						top_prior = 2; top_assoc = 1;
+					}
+					if (priority6.find(tokens.top()) != priority6.end()) {
+						top_prior = 1; top_assoc = 2;
+					}
+				}
+				tokens.push(line);
+			}
+		}
 	}
+	while (!tokens.empty()) {
+		result.push(tokens.top());
+		tokens.pop();
+	}
+	//проверка
+	while (!result.empty()) {
+		cout << result.front() << " ";
+		result.pop();
+	}
+
 	return "1,2,3"; // верну нормальное потом
 }
 
@@ -212,6 +177,6 @@ const string expression::transmute()
 //П.С ТОоха юзай throw exceptions(string,position) для выброса исключений
 const string expression::calculate() {
 
-	
+	return "1,2,3";
 }
 
