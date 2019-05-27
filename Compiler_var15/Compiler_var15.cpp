@@ -12,7 +12,7 @@ int main()
 {
 	try
 	{
-		expression a("1 + 2 * 3");
+		expression a("( 1 + 2 ) * 3");
 		a.transmute();
 	}
 	catch ( std::exception& ex)

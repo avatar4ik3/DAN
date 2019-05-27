@@ -121,14 +121,6 @@ const string expression::transmute()
 						throw exceptions("unbalanced expression at expression::calculate", input.tellg());
 					}
 				}
-				try
-				{
-					tokens.pop();
-				}
-				catch (const std::exception&)
-				{
-					throw exceptions("unbalanced expression at expression::calculate", input.tellg());
-				}
 			}
 			//если бинарная операция
 			if (prior) { 
