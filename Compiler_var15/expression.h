@@ -6,11 +6,10 @@
 #include <stack>
 #include <queue>
 #include <set>
+//#include "token.h"
 using namespace std;
 //возможные операторы
 const set<string> operators({ "^","~:","+","-","*","/","&","<",">","=","#","!",";","(",")","entier","frac" });
-
-
 
 //Денис: я хз почему конъюнкия(&) и дизъюнкция(!) отдельно от всех и настолько далеко и почему отрицание это тильта(и тильт тоже) (╯°□°）╯︵ ┻━┻ 
 class expression
