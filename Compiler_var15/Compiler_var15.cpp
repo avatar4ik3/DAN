@@ -5,14 +5,21 @@
 #include<fstream>
 #include <iostream>
 #include "expression.h"
-#include "token.h"
+
 
 using namespace std;
 
 int main()
 {
-	token a(";", 1);
-	operand_is_defined(";");
+	try
+	{
+		expression a("1 + 2");
+		a.transmute();
+	}
+	catch (const std::exception& ex)
+	{
+		cout << ex.what();
+	}
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"

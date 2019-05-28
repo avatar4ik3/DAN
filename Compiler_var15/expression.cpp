@@ -46,109 +46,83 @@ expression::expression(const expression & rh):_expression_line(rh._expression_li
 	if (a.empty())throw exceptions("empty expression");
 }
 
-const queue<string> expression::transmute()
+const token_queue  expression::transmute()
 {
-	stack<string> tokens; // это стек операндов
-	queue<string> result; // это результат в виде очереди чтобы было удобней работать 
-	string line; // строка в которую читаем
-	int prior(0), top_prior(0);//приоритеты строк
-	int assoc(0), top_assoc(0);//ассоциативноть операций 1 = правая 2 = левая
-	bool prev_is_number(false),top_prev_is_number(false); 
-	istringstream input(_expression_line);//поток из строки для удобства работы
+	stack<token> tokens;  // стак токенов
+	token tk; //токен для работы 
+	istringstream input(_expression_line); // поток из строки для удобства работы
+	string line; // строка для считывания
+	bool prev_is_number(false);
+	_result_queue.~token_queue();//очситка очереди
 
-	while (line != ";") {
+
+	while (!input.eof()) {
 		input >> line;
-		if (input.eof() && line != ";")throw exceptions("Token ';' was expected at the end of the expressions at expression::calculate");
-		if (line.length() >= 1 && operators.find(line) == operators.end()) {
-			try
-			{
-				stod(line.c_str());
-				result.push(line);
-				prev_is_number = true;
-			}
-			catch (const std::exception&)
-			{
-				throw exceptions("Unexpected token at expression::calculate",input.tellg());
-			}
+		try
+		{
+			tk = pair<string, bool>(line, prev_is_number);
+		}
+		catch (const std::exception& ex)
+		{
+			throw("Unexpected element at expression::transmute", input.tellg());
+		}
+		//число отправляется в ответ
+		if (tk.is_number()) {
+			_result_queue.push(tk);
+			prev_is_number = true;
 		}
 		else {
-			//установка приоритета текущеё операции
-			prior = 0;
-			assoc = 0;
-			this->set_prior(line, prior, assoc, prev_is_number);
-
-			//сам алгоритм
-			//если строка - число кидаем в стек ( тут он уже кинут)
-			//если строка - постфиксная функция то кидаем в стек(тут нет постфиксных функцый)
-			//если символ - -префиксная функция то кидаем в стек
-			if (line == "entier" || line == "frac" || (prior == 6 && !prev_is_number)) {
-				tokens.push(line);
+			//если поствикс то в ответ(таких функций нет)
+			//если префикс то в стек
+			//если открывающая скобка то в стек
+			if (tk.is_unary() || tk.is_opened_bracket()) {
+				tokens.push(tk);
 			}
-			//если символ - открывающая скобка то кидаем в стек
-			if (line == "(")
-			{
-				tokens.push(line);
-			}
-			//если символ - закрывающая скобка то выталкиваем токены из стека пока не дойдем до открывающей скобки
-			if (line == ")") {
-				string tmp(tokens.top());
-				try
-				{
-					tokens.pop();
-				}
-				catch (const std::exception&)
-				{
-					throw exceptions("unbalanced expression at expression::calculate", input.tellg());
-				}
-				while (tmp != "(") {
-					result.push(tmp);
-					tmp = tokens.top();
+			//если закрывающая то выталкиваем в ответ до открывающей
+			if (tk.is_closed_bracket()) {
+				while (!tokens.top().is_opened_bracket()) {
+					_result_queue.push(tokens.top());
 					try
 					{
 						tokens.pop();
 					}
 					catch (const std::exception&)
 					{
-						throw exceptions("unbalanced expression at expression::calculate", input.tellg());
+						throw exceptions("Unbalanced expression at expression::transmute", input.tellg());
 					}
 				}
+				tokens.pop();
 			}
-			//если бинарная операция...
-			if (prior) { 
-				//TODO перевести строку /*tokens.top() == "entier" || tokens.top() == "frac" ||*/ в приемлимый вид
-				while (!tokens.empty() && (tokens.top() == "entier" || tokens.top() == "frac" || (top_prior == 6 && !top_prev_is_number) || top_prior > prior || (top_prior == prior && top_assoc == 2))) {
-					result.push(tokens.top());
+			//если бинарная операция то выталкиваем топ пока топ префикс или приорететней или левоасоциативный с одинаковым приоритетом
+			if (tk.is_binary()) {
+				while (!tokens.empty() && (tokens.top().is_unary() || tokens.top() > tk || (tokens.top() == tk && tokens.top().is_left_associative()))) {
+					_result_queue.push(tokens.top());
 					tokens.pop();
-					//изменение приоритета вершины стека
-					if(!tokens.empty())this->set_prior(tokens.top(), top_prior, top_assoc, top_prev_is_number);
-					
 				}
-				tokens.push(line);
+				tokens.push(tk);
 			}
-			top_prior = prior;
-			top_assoc = assoc;
-			top_prev_is_number = prev_is_number;
 			prev_is_number = false;
-
 		}
 	}
+	//пока остались операнды выкидываем их в ответ
 	while (!tokens.empty()) {
-		result.push(tokens.top());
+		_result_queue.push(tokens.top());
 		tokens.pop();
 	}
-	//проверка
-	while (!result.empty()) {
-		cout << result.front() << " ";
-		result.pop();
-	}
-	this->_result_queue = result;
+	//проверяем
+	
+	/*while (!_result_queue.empty()) {
+		tk = _result_queue.front();
+		cout << tk.get_operand() << " ";
+		_result_queue.pop();
+	}*/
 	return _result_queue; // верну нормальное потом
 }
 
 //часть антона
 //П.С ТОоха юзай throw exceptions(string,position) для выброса исключений
 const string expression::calculate() {
-	stack<string> Stack;
+	/*stack<string> Stack;
 	if (_result_queue.empty() == false) throw exceptions("_result_queue is empty");
 	else {
 		while (_result_queue.empty() != false) {
@@ -158,6 +132,7 @@ const string expression::calculate() {
 
 			}
 		}
-	}
+	}*/
+	return "1,2,3";// заглушка
 }
 

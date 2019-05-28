@@ -154,6 +154,7 @@
     <ClInclude Include="expression.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="token.h" />
+    <ClInclude Include="token_queue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Compiler_var15.cpp" />
@@ -165,6 +166,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="token.cpp" />
+    <ClCompile Include="token_queue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
