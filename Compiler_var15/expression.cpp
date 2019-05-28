@@ -128,7 +128,7 @@ const string expression::calculate() {
 		while (_result_queue.empty() != false) {
 			string buff;
 			buff = _result_queue.front();
-			if (buff != "/") {
+			if (buff != "/") {//
 
 			}
 		}
