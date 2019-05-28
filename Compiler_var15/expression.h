@@ -11,7 +11,7 @@ using namespace std;
 const set<string> operators({ "^","~:","+","-","*","/","&","<",">","=","#","!",";","(",")","entier","frac" });
 
 //приоритеты операторов ...
-const set<string> prefix({ "frac","entier","+","-"});//префиксные функции, в т.ч. унарный + и -
+const set<string> prefix({ "frac","entier"});//префиксные функции, в т.ч. унарный + и - ( содержатся в priority 0)
 const set<string> priority0({ "+","-" });// изменение знака переменной
 const set<string> priority1({ "^","~:"}); //возведение в  степень,отрицание, ffjfj
 const set<string> priority2({ "*" }); //умножение
