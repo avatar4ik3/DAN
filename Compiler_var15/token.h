@@ -1,16 +1,13 @@
 #pragma once
-#define TOKEN_H
 #include <string>
 #include <set>
 using namespace std;
 
-//константы обозначений 
 const int right_associative(0);
 const int left_associative(1);
 const int unary_operand(0);
 const int binary_operand(1);
 const int punctuation_mark(-1);
-const int number(-2);
 
 
 //приоритеты операторов ...
@@ -22,44 +19,38 @@ const set<string> priority3({ "/","&" }); //деление и конъюнкиця
 const set<string> priority4({ "+","-" }); // бинарные сложение и вычитание
 const set<string> priority5({ "<",">","=","#" }); // сравнения и "не равно"(#)
 const set<string> priority6({ "!" }); //дизъюнкция
-const set<string> priority7({ ";","(",")" });// пунктуация
+const set<string> priority7({ ";","(",")" });//
 
 class token
 {
 public:
+	const string 
+		symbol; // сам символ
+	const int
+		priority; //его приоритет
 	
-	
-	token() :symbol("empty token"), priority(0), type(-1), associativity(-1) {};
+	token() = default;
 	~token() = default;
 
 	explicit token(const string & operand,const bool & prev_is_number):symbol(operand),priority(set_priority(operand,prev_is_number)),type(set_type(operand,prev_is_number)),associativity(set_associativity(operand,prev_is_number)) {};
 
-	token & operator = (const token & rh) {
-		//if (*this == rh)throw exception("attempt to selfcopy");
-		symbol = rh.symbol;
-		type = rh.type;
-		associativity = rh.associativity;
-		priority = rh.priority;
-		return *this;
+	token & operator =(const token & rh) {
+		if (*this == rh)throw exception("attempt to selfcopy");
+		*this = token(rh);
 	}
 	token & operator = (const string & rh) {
 		if (this->symbol == rh)throw exception("attempt to selfcopy");
-		*this = *(new token(rh, 0));
-		return *this;
-	}
-	token & operator = (const pair<string, bool> rh) {
-		*this = *(new token(rh.first, rh.second));
-		return *this;
+		*this = token(rh, 1);
 	}
 	void set(const string &operand, const bool & prev_is_number) {
 		*this = token(operand, prev_is_number);
 	}
-	
+
 	const bool operator ==(const string & rh) {
 		return symbol == rh;
 	}
 	const bool operator ==(const token & rh) {
-		return  priority == rh.priority;
+		return symbol == rh.symbol && priority == rh.priority && type == rh.type && associativity == rh.associativity;
 	}
 	const bool operator ==(const int & rh) {
 		return priority == rh;
@@ -97,53 +88,29 @@ public:
 	const bool operator <=(const int & rh) {
 		return priority <= rh;
 	}
-	//проверка на тип операнда
+
 	const bool is_binary() {
 		return type == binary_operand;
 	}
 	const bool is_unary() {
 		return type == unary_operand;
 	}
-	//проверка на ассоциативность
 	const bool is_right_associative() {
 		return associativity == right_associative;
 	}
-	const bool is_left_associative() {
+	const bool if_left_associative() {
 		return associativity == left_associative;
 	}
-	//проверка на тип пунктуации
 	const bool is_punctuation_mark() {
 		return type == punctuation_mark;
 	}
-	const bool is_opened_bracket() {
-		return symbol == "(";
-	}
-	const bool is_closed_bracket() {
-		return symbol == ")";
-	}
-	const bool is_end_operand() {
-		return symbol == ";";
-	}
-	//проверка на число
-	const bool is_number() {
-		return type == number;
-	}
-	
-
-	const string get_operand() {
-		return symbol;
-	}
-	const int get_priority() {
-		return priority;
-	}
 
 private:
-	string
-		symbol; // сам символ
-	int
-		priority, //его приоритет
+
+	const int
 		type,// его тип , 1 - бинарная, 0 - унарная,-1 знак препинания
 		associativity;//ассоциативность 1 - левая,0 - правая,-1 знак препинания
+
 
 
 	int set_priority(const string & operand,const bool &prev_is_number) {
@@ -171,33 +138,14 @@ private:
 		if (priority7.find(operand) != priority7.end()) {
 			return 0;
 		}
-		try
-		{
-			stod(operand.c_str());
-			return 0;
-		}
-		catch (const std::exception&)
-		{
-			throw exception("Unknown operand at token::set_priority");
-		}
-		
+		throw exception("Unknown operand at token::set_priority");
 	}
 	int set_type(const string & operand,const bool &prev_is_number) {
 		if (prefix.find(operand) == prefix.end()) {
 			if (priority0.find(operand) != priority0.end()) {
 				return prev_is_number == binary_operand;
 			}
-			else if (priority7.find(operand) != priority7.end()) {
-				return punctuation_mark;
-			}
-			if (priority1.find(operand) == priority1.end() ||
-				priority2.find(operand) == priority2.end() ||
-				priority3.find(operand) == priority3.end() ||
-				priority4.find(operand) == priority4.end() ||
-				priority5.find(operand) == priority5.end() ||
-				priority6.find(operand) == priority6.end())	{
-				return number;
-			}
+			else return punctuation_mark;
 		}
 		return binary_operand;
 	}
@@ -226,21 +174,11 @@ private:
 		if (priority7.find(operand) != priority7.end()) {
 			return punctuation_mark;
 		}
-		try
-		{
-			stod(operand.c_str());
-			return number;
-		}
-		catch (const std::exception&)
-		{
-			throw exception("Unknown operand at token::set_associativity");
-		}
-		
+		throw exception("Unknown operand at token::set_associativity");
 	}
-
 };
 
-/*const bool operand_is_defined(const string & operand) {
+const bool operand_is_defined(const string & operand) {
 	return 
 		prefix.find(operand) != prefix.end() ||
 		priority0.find(operand) != priority0.end() ||
@@ -252,4 +190,3 @@ private:
 		priority6.find(operand) != priority6.end() ||
 		priority7.find(operand) != priority7.end();
 }
-*/

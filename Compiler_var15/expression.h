@@ -6,8 +6,6 @@
 #include <stack>
 #include <queue>
 #include <set>
-#include <list>
-#include "token.h"
 //#include "token.h"
 using namespace std;
 //возможные операторы
@@ -18,7 +16,7 @@ class expression
 {
 private:
 	string _expression_line;
-	queue<token>_result_queue;
+	queue<string> _result_queue;
 	void set_prior(string,int&, int&,bool);
 public:
 
@@ -38,7 +36,7 @@ public:
 
 
 	~expression() {};
-	const queue<token> transmute();
+	const queue<string> transmute();
 	const string calculate();
 };
 
