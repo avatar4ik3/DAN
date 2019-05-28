@@ -19,7 +19,6 @@ class expression
 private:
 	string _expression_line;
 	token_queue _result_queue;
-	void set_prior(string,int&, int&,bool);
 public:
 
 	class exceptions:public exception {

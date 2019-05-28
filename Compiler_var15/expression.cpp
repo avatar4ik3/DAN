@@ -7,11 +7,6 @@ using namespace std;
 
 
 
-void expression::set_prior(string line, int &prior, int &assoc,bool prev_is_number)
-{
-	
-}
-
 expression::expression():_expression_line("")//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	throw exceptions("empty expression");
