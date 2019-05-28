@@ -17,7 +17,6 @@ const set<string> priority7({ ";","(",")" });//
 
 class token
 {
-
 public:
 	const string 
 		symbol; // сам символ
@@ -28,11 +27,56 @@ public:
 		associativity;//ассоциативность 1 - левая,0 - правая
 
 	token() = default;
-	explicit token(const string & operand,const bool & prev_is_number):symbol(operand),priority(set_priority(operand,prev_is_number)),type(set_type(prev_is_number)),associativity(set_associativity(operand,prev_is_number)) {};
-	token & operator=(const string & rh) {
+	explicit token(const string & operand,const bool & prev_is_number):symbol(operand),priority(set_priority(operand,prev_is_number)),type(set_type(operand,prev_is_number)),associativity(set_associativity(operand,prev_is_number)) {};
+
+	token & operator =(const token & rh) {
+		if (*this == rh)throw exception("attempt to selfcopy");
 
 	}
-	~token();
+
+	const bool operator ==(const string & rh) {
+		return symbol == rh;
+	}
+	const bool operator ==(const token & rh) {
+		return symbol == rh.symbol && priority == rh.priority && type == rh.type && associativity == rh.associativity;
+	}
+	const bool operator ==(const int & rh) {
+		return priority == rh;
+	}
+	const bool operator !=(const string & rh) {
+		return symbol != rh;
+	}
+	const bool operator !=(const token & rh) {
+		return symbol != rh.symbol && priority != rh.priority && type != rh.type && associativity != rh.associativity;
+	}
+	const bool operator !=(const int & rh) {
+		return priority != rh;
+	}
+	const bool operator >(const token & rh) {
+		return priority > rh.priority;
+	}
+	const bool operator <(const token & rh) {
+		return priority < rh.priority;
+	}
+	const bool operator >=(const token & rh) {
+		return priority >= rh.priority;
+	}
+	const bool operator <=(const token & rh) {
+		return priority <= rh.priority;
+	}
+	const bool operator >(const int & rh) {
+		return priority > rh;
+	}
+	const bool operator <(const int & rh) {
+		return priority < rh;
+	}
+	const bool operator >=(const int & rh) {
+		return priority >= rh;
+	}
+	const bool operator <=(const int & rh) {
+		return priority <= rh;
+	}
+	~token() = default;
 private:
 	int set_priority(const string & operand,const bool &prev_is_number) {
 		if (priority0.find(operand) != priority0.end() && !prev_is_number) {
