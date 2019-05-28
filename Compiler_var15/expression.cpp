@@ -168,7 +168,16 @@ const queue<string> expression::transmute()
 //часть антона
 //П.С ТОоха юзай throw exceptions(string,position) для выброса исключений
 const string expression::calculate() {
+	stack<string> Stack;
+	if (_result_queue.empty() == false) throw exceptions("_result_queue is empty");
+	else {
+		while (_result_queue.empty() != false) {
+			string buff;
+			buff = _result_queue.front();
+			if (buff != "/") {
 
-	return "1,2,3";
+			}
+		}
+	}
 }
 
