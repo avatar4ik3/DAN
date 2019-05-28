@@ -10,15 +10,7 @@ using namespace std;
 //возможные операторы
 const set<string> operators({ "^","~:","+","-","*","/","&","<",">","=","#","!",";","(",")","entier","frac" });
 
-//приоритеты операторов ...
-const set<string> prefix({ "frac","entier"});//префиксные функции, в т.ч. унарный + и - ( содержатся в priority 0)
-const set<string> priority0({ "+","-" });// изменение знака переменной
-const set<string> priority1({ "^","~:"}); //возведение в  степень,отрицание, ffjfj
-const set<string> priority2({ "*" }); //умножение
-const set<string> priority3({ "/","&" }); //деление и конъюнкиця 
-const set<string> priority4({ "+","-" }); // бинарные сложение и вычитание
-const set<string> priority5({ "<",">","=","#" }); // сравнения и "не равно"(#)
-const set<string> priority6({ "!" }); //дизъюнкция
+
 
 //Денис: я хз почему конъюнкия(&) и дизъюнкция(!) отдельно от всех и настолько далеко и почему отрицание это тильта(и тильт тоже) (╯°□°）╯︵ ┻━┻ 
 class expression
