@@ -51,7 +51,8 @@ const token_queue  expression::transmute()
 	_result_queue.~token_queue();//очситка очереди
 
 
-	while (!input.eof()) {
+	while (!tk.is_end_operand()) {
+		if (!input.eof())throw exceptions("Expected operand ';' at the end of expression");
 		input >> line;
 		try
 		{
