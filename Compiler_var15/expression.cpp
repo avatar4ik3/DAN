@@ -9,27 +9,7 @@ using namespace std;
 
 void expression::set_prior(string line, int &prior, int &assoc,bool prev_is_number)
 {
-	if (priority0.find(line) != priority0.end() && !prev_is_number) {
-		prior = 6; assoc = 2;
-	}
-	if (priority1.find(line) != priority1.end()) {
-		prior = 6; assoc = 2;
-	}
-	if (priority2.find(line) != priority2.end()) {
-		prior = 5; assoc = 1;
-	}
-	if (priority3.find(line) != priority3.end()) {
-		prior = 4; assoc = 2;
-	}
-	if (priority4.find(line) != priority4.end() && prev_is_number) {
-		prior = 3; assoc = 2;
-	}
-	if (priority5.find(line) != priority5.end()) {
-		prior = 2; assoc = 2;
-	}
-	if (priority6.find(line) != priority6.end()) {
-		prior = 1; assoc = 1;
-	}
+	
 }
 
 expression::expression():_expression_line("")//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
@@ -78,7 +58,7 @@ const queue<string> expression::transmute()
 
 	while (line != ";") {
 		input >> line;
-		if (input.eof() && line != ";")throw exceptions("Token ';' was expecting at the end of the expressions an expression::calculate");
+		if (input.eof() && line != ";")throw exceptions("Token ';' was expected at the end of the expressions at expression::calculate");
 		if (line.length() >= 1 && operators.find(line) == operators.end()) {
 			try
 			{
@@ -101,7 +81,7 @@ const queue<string> expression::transmute()
 			//если строка - число кидаем в стек ( тут он уже кинут)
 			//если строка - постфиксная функция то кидаем в стек(тут нет постфиксных функцый)
 			//если символ - -префиксная функция то кидаем в стек
-			if (line == "entier" || line == "frac") {
+			if (line == "entier" || line == "frac" || (prior == 6 && !prev_is_number)) {
 				tokens.push(line);
 			}
 			//если символ - открывающая скобка то кидаем в стек
@@ -136,7 +116,7 @@ const queue<string> expression::transmute()
 			//если бинарная операция...
 			if (prior) { 
 				//TODO перевести строку /*tokens.top() == "entier" || tokens.top() == "frac" ||*/ в приемлимый вид
-				while (!tokens.empty() && (tokens.top() == "entier" || tokens.top() == "frac" || (prior == 6) || top_prior > prior || (top_prior == prior && top_assoc == 2))) {
+				while (!tokens.empty() && (tokens.top() == "entier" || tokens.top() == "frac" || (top_prior == 6 && !top_prev_is_number) || top_prior > prior || (top_prior == prior && top_assoc == 2))) {
 					result.push(tokens.top());
 					tokens.pop();
 					//изменение приоритета вершины стека
