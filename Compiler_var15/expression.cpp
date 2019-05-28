@@ -136,7 +136,7 @@ const queue<string> expression::transmute()
 			//если бинарная операция
 			if (prior) { 
 				//TODO перевести строку /*tokens.top() == "entier" || tokens.top() == "frac" ||*/ в приемлимый вид
-				while (/*tokens.top() == "entier" || tokens.top() == "frac" ||*/!tokens.empty() &&( top_prior > prior || (top_prior == prior && top_assoc == 2))) {
+				while (!tokens.empty() && (tokens.top() == "entier" || tokens.top() == "frac" || (prior == 6) || top_prior > prior || (top_prior == prior && top_assoc == 2))) {
 					result.push(tokens.top());
 					tokens.pop();
 					//изменение приоритета вершины стека

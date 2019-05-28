@@ -11,6 +11,7 @@ using namespace std;
 const set<string> operators({ "^","~:","+","-","*","/","&","<",">","=","#","!",";","(",")","entier","frac" });
 
 //приоритеты операторов
+const set<string> prefix({ "frac","entier" });
 const set<string> priority0({ "+","-" });// изменение знака переменной
 const set<string> priority1({ "^","~:"}); //возведение в  степень,отрицание,
 const set<string> priority2({ "*" }); //умножение
