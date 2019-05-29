@@ -5,12 +5,12 @@
 using namespace std;
 
 //константы обозначений 
-const int right_associative(0);
-const int left_associative(1);
-const int unary_operand(0);
-const int binary_operand(1);
-const int punctuation_mark(-1);
-const int number(-2);
+const string right_associative("right");
+const string left_associative("left");
+const string unary_operand("unary");
+const string binary_operand("binary");
+const string punctuation_mark("punctuation");
+const string number("number");
 
 
 //приоритеты операторов ...
@@ -29,7 +29,7 @@ class token
 public:
 	
 	/*поумолчанию создается токен с "пустым токеном"*/
-	token() :symbol("empty token"), priority(0), type(-1), associativity(-1) {};
+	token() :symbol("empty token"), priority(0), type(unary_operand), associativity(left_associative) {};
 	~token() = default;
 	/*конструктор вызова через операнд и "предыдущий аперанд - число?"*/
 	explicit token(const string & operand,const bool & prev_is_number):symbol(operand),priority(set_priority(operand,prev_is_number)),type(set_type(operand,prev_is_number)),associativity(set_associativity(operand,prev_is_number)) {};
@@ -87,14 +87,15 @@ private:
 	string
 		symbol; // сам символ
 	int
-		priority, //его приоритет
+		priority; //его приоритет
+	string
 		type,// его тип , 1 - бинарная, 0 - унарная,-1 знак препинания
 		associativity;//ассоциативность 1 - левая,0 - правая,-1 знак препинания
 
 	//функции определения приоритета типа и асоциативности лексемы необходимые для конструктора
-	int set_priority(const string &, const bool &);
-	int set_type(const string & , const bool &);
-	int set_associativity(const string & , const bool &);
+	const int set_priority(const string &, const bool &);
+	const string set_type(const string & , const bool &);
+	const string set_associativity(const string & , const bool &);
 
 };
 

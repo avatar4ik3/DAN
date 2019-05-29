@@ -105,7 +105,7 @@ const int token::get_priority() {
 }
 
 
-int token::set_priority(const string & operand, const bool &prev_is_number) {
+const int token::set_priority(const string & operand, const bool &prev_is_number) {
 	if (priority0.find(operand) != priority0.end() && !prev_is_number) {
 		return 6;
 	}
@@ -141,10 +141,13 @@ int token::set_priority(const string & operand, const bool &prev_is_number) {
 	}
 
 }
-int token::set_type(const string & operand, const bool &prev_is_number) {
+const string token::set_type(const string & operand, const bool &prev_is_number) {
 	if (prefix.find(operand) == prefix.end()) {
 		if (priority0.find(operand) != priority0.end()) {
-			return prev_is_number == binary_operand;
+			if (prev_is_number) {
+				return binary_operand;
+			}
+			return unary_operand;
 		}
 		else if (priority7.find(operand) != priority7.end()) {
 			return punctuation_mark;
@@ -160,7 +163,7 @@ int token::set_type(const string & operand, const bool &prev_is_number) {
 	}
 	return binary_operand;
 }
-int token::set_associativity(const string & operand, const bool &prev_is_number) {
+const string token::set_associativity(const string & operand, const bool &prev_is_number) {
 	if (priority0.find(operand) != priority0.end() && !prev_is_number) {
 		return left_associative;
 	}
