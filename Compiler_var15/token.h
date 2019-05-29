@@ -11,6 +11,7 @@ const string unary_operand("unary");
 const string binary_operand("binary");
 const string punctuation_mark("punctuation");
 const string number("number");
+const string variable("variable");
 
 
 //приоритеты операторов ...
@@ -74,6 +75,8 @@ public:
 	const bool is_end_operand();
 	//проверка на число
 	const bool is_number();
+	//проверка на переменную
+	const bool is_variable();
 	
 	//функция возврата нашеё лексемы
 	const string get_operand();

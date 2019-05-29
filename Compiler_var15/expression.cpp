@@ -66,7 +66,7 @@ const queue<token> * expression::transmute()
 			throw("Unexpected element at expression::transmute", input.tellg());
 		}
 		//число отправляется в ответ
-		if (tk.is_number()) {
+		if (tk.is_number() || tk.is_variable()) {
 			result_queue.push(tk);
 			prev_is_number = true;
 		}
@@ -121,7 +121,14 @@ const queue<token> * expression::transmute()
 
 //часть антона
 //П.С ТОоха юзай throw exceptions(string,position) для выброса исключений
-const string expression::calculate() {
+//P.P.S нужно так же учесть что в токене есть тип variable (переменная) и ответ нужно давать с учетем их
+//например если было 2 a + то ответ будет a + 2
+//именно поэтому возращаем строку а не ответ
+//если переменных нет то ответом должно быть число
+//то есть нужно знать возможно ли получить внятный ответ,но вообще можно не ебаться и воспользоваться методами класса токен
+//P.P.P.S я еще поебусь с тем чтобы потом у пользователей просить ввести значения этих переменых и пускать на второй круг но уже со взятыми данными
+//либо сразу просить ввести значения переменных после transmute
+const string expression::calculate() { 
 	/*stack<string> Stack;
 	if (_result_queue.empty() == false) throw exceptions("_result_queue is empty");
 	else {

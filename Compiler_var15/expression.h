@@ -7,6 +7,7 @@
 #include <queue>
 #include <set>
 #include <list>
+#include <map>
 #include "token_queue.h"
 //#include "token.h"
 using namespace std;
@@ -19,6 +20,7 @@ class expression
 private:
 	string _expression_line;
 	queue<token> *_result_queue;
+	map<string, double> map_of_variables;
 public:
 
 	class exceptions:public exception {
@@ -37,6 +39,7 @@ public:
 
 
 	~expression() {};
+	const queue<token>* transmute_whith_literals();
 	const queue<token>*  transmute();
 	const string calculate();
 };
