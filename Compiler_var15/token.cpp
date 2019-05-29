@@ -157,7 +157,15 @@ const string token::set_type(const string & operand, const bool &prev_is_number)
 			priority4.find(operand) == priority4.end() &&
 			priority5.find(operand) == priority5.end() &&
 			priority6.find(operand) == priority6.end()) {
+			try
+			{
+				stod(operand);
 				return number;
+			}
+			catch (const std::exception&)
+			{
+				throw exception("unexpected element at token::set_type");
+			}
 		}
 	}
 	return binary_operand;

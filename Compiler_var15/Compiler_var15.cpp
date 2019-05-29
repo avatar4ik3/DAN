@@ -29,7 +29,7 @@ int main()
 	{
 		map<string, double> dict;
 		dict.insert(pair<string, double>("a", 1.5));
-		expression a("a # 2");
+		expression a("#");
 		a.set_variables(dict);
 		a.transmute();
 	}
