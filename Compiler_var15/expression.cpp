@@ -7,12 +7,12 @@ using namespace std;
 
 
 
-expression::expression():_expression_line("")//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression():_expression_line(""),map_of_variables(nullptr),_result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	throw exceptions("empty expression");
 }
 
-expression::expression(fstream input)//:operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' }) 
+expression::expression(fstream input): map_of_variables(nullptr), _result_queue(nullptr)//:operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' }) 
 {
 	getline(input, _expression_line);
 	string a(_expression_line); 
@@ -20,25 +20,37 @@ expression::expression(fstream input)//:operators({ '^','~',"+","-","*","/",'&',
 	if (a.empty())throw exceptions("empty expression");
  }
 
-expression::expression(string & str):_expression_line(str)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression(string & str):_expression_line(str), map_of_variables(nullptr), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	string a(_expression_line);
 	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
 	if (a.empty())throw exceptions("empty expression");
 }
 
-expression::expression(const char *str):_expression_line(str)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression(const char *str):_expression_line(str), map_of_variables(nullptr), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	string a(_expression_line);
 	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
 	if (a.empty())throw exceptions("empty expression");
 }
 
-expression::expression(const expression & rh):_expression_line(rh._expression_line)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression(const expression & rh):_expression_line(rh._expression_line), map_of_variables(nullptr), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	string a(_expression_line);
 	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
 	if (a.empty())throw exceptions("empty expression");
+}
+
+void expression::set_variables(const map<string, double> & dictionary)
+{
+	if (dictionary.empty())throw exceptions("attempt to add empty dectionary");
+	delete map_of_variables;
+	map_of_variables = new map<string,double>(dictionary);
+}
+
+void expression::add_variable(const pair<string, double>& var)
+{
+	map_of_variables->insert(var);
 }
 
 const queue<token> * expression::transmute()
@@ -60,13 +72,20 @@ const queue<token> * expression::transmute()
 		try
 		{
 			tk = pair<string, bool>(line, prev_is_number);
+			prev_is_number = true;
 		}
-		catch (const std::exception& ex)
+		catch (const std::exception&)
 		{
-			throw("Unexpected element at expression::transmute", input.tellg());
+			if (map_of_variables == nullptr || !map_of_variables->find(line)->second) {
+				throw exception("Unexpected element at expression::transmute", input.tellg());
+			}
+			else {
+				tk = pair<string, bool>(to_string(map_of_variables->find(line)->second), prev_is_number);
+				prev_is_number = true;
+			}
 		}
 		//число отправляется в ответ
-		if (tk.is_number() || tk.is_variable()) {
+		if (tk.is_number()) {
 			result_queue.push(tk);
 			prev_is_number = true;
 		}
@@ -109,6 +128,7 @@ const queue<token> * expression::transmute()
 		tokens.pop();
 	}
 	//проверяем
+	delete _result_queue;
 	_result_queue = new queue<token>(result_queue);
 	while (!result_queue.empty()) {
 		tk = result_queue.front();

@@ -8,12 +8,21 @@
 
 
 using namespace std;
-
+/*
+	 в мейне:
+	 создание / считывание строки
+	 добавление переменных ( любое количество)
+	 вывод ОПЗ на экран
+	 Вывод ответа из САЛУ на экран
+*/
 int main()
 {
 	try
 	{
-		expression a("1 + 2");
+		map<string, double> dict;
+		dict.insert(pair<string, double>("a", 1.5));
+		expression a("1 + 2 + a");
+		a.set_variables(dict);
 		a.transmute();
 	}
 	catch (const std::exception& ex)

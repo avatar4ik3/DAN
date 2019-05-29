@@ -96,12 +96,6 @@ const bool token:: is_number() {
 	return type == number;
 }
 
-const bool token::is_variable()
-{
-	return type == variable;
-}
-
-
 const string token::get_operand() {
 	return symbol;
 }
@@ -135,7 +129,7 @@ const int token::set_priority(const string & operand, const bool &prev_is_number
 	if (priority7.find(operand) != priority7.end()) {
 		return 0;
 	}
-	/*try
+	try
 	{
 		stod(operand.c_str());
 		return 0;
@@ -143,8 +137,7 @@ const int token::set_priority(const string & operand, const bool &prev_is_number
 	catch (const std::exception&)
 	{
 		throw exception("Unknown operand at token::set_priority");
-	}*/
-	return 0;
+	}
 
 }
 const string token::set_type(const string & operand, const bool &prev_is_number) {
@@ -164,15 +157,7 @@ const string token::set_type(const string & operand, const bool &prev_is_number)
 			priority4.find(operand) == priority4.end() ||
 			priority5.find(operand) == priority5.end() ||
 			priority6.find(operand) == priority6.end()) {
-			try
-			{
-				stod(operand);
 				return number;
-			}
-			catch (const std::exception&)
-			{
-				return variable;
-			}
 		}
 	}
 	return binary_operand;
@@ -209,8 +194,7 @@ const string token::set_associativity(const string & operand, const bool &prev_i
 	}
 	catch (const std::exception&)
 	{
-		return variable;
-		//throw exception("Unknown operand at token::set_associativity");
+		throw exception("Unknown operand at token::set_associativity");
 	}
 
 }
