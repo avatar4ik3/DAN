@@ -11,9 +11,12 @@ using namespace std;
 
 int main()
 {
+	/*queue<token> a;
+	a.push(token(";", true));
+	cout << a.front().get_operand();*/
 	try
 	{
-		expression a("1 + 2");
+		expression a("1 + 2 +hgchgc");
 		a.transmute();
 	}
 	catch (const std::exception& ex)

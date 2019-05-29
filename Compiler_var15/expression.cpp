@@ -41,18 +41,21 @@ expression::expression(const expression & rh):_expression_line(rh._expression_li
 	if (a.empty())throw exceptions("empty expression");
 }
 
-const token_queue  expression::transmute()
+const queue<token> * expression::transmute()
 {
 	stack<token> tokens;  // стак токенов
 	token tk; //токен для работы 
 	istringstream input(_expression_line); // поток из строки для удобства работы
 	string line; // строка для считывания
 	bool prev_is_number(false);
-	_result_queue.~token_queue();//очситка очереди
+	//_result_queue.~queue();//очситка очереди
+	queue<token> result_queue;
 
 
-	while (!tk.is_end_operand()) {
-		if (!input.eof())throw exceptions("Expected operand ';' at the end of expression");
+	while (!input.eof()) {
+		//если конец файла то заканиваем работу
+		if (input.peek() == EOF)break;
+		//if (!input.eof())throw exceptions("Expected operand ';' at the end of expression");
 		input >> line;
 		try
 		{
@@ -64,7 +67,7 @@ const token_queue  expression::transmute()
 		}
 		//число отправляется в ответ
 		if (tk.is_number()) {
-			_result_queue.push(tk);
+			result_queue.push(tk);
 			prev_is_number = true;
 		}
 		else {
@@ -77,7 +80,7 @@ const token_queue  expression::transmute()
 			//если закрывающая то выталкиваем в ответ до открывающей
 			if (tk.is_closed_bracket()) {
 				while (!tokens.top().is_opened_bracket()) {
-					_result_queue.push(tokens.top());
+					result_queue.push(tokens.top());
 					try
 					{
 						tokens.pop();
@@ -92,7 +95,7 @@ const token_queue  expression::transmute()
 			//если бинарная операция то выталкиваем топ пока топ префикс или приорететней или левоасоциативный с одинаковым приоритетом
 			if (tk.is_binary()) {
 				while (!tokens.empty() && (tokens.top().is_unary() || tokens.top() > tk || (tokens.top() == tk && tokens.top().is_left_associative()))) {
-					_result_queue.push(tokens.top());
+					result_queue.push(tokens.top());
 					tokens.pop();
 				}
 				tokens.push(tk);
@@ -102,16 +105,17 @@ const token_queue  expression::transmute()
 	}
 	//пока остались операнды выкидываем их в ответ
 	while (!tokens.empty()) {
-		_result_queue.push(tokens.top());
+		result_queue.push(tokens.top());
 		tokens.pop();
 	}
 	//проверяем
-	
-	/*while (!_result_queue.empty()) {
-		tk = _result_queue.front();
+	_result_queue = new queue<token>(result_queue);
+	while (!result_queue.empty()) {
+		tk = result_queue.front();
 		cout << tk.get_operand() << " ";
-		_result_queue.pop();
-	}*/
+		result_queue.pop();
+	}
+	
 	return _result_queue; // верну нормальное потом
 }
 

@@ -18,7 +18,7 @@ class expression
 {
 private:
 	string _expression_line;
-	token_queue _result_queue;
+	queue<token> *_result_queue;
 public:
 
 	class exceptions:public exception {
@@ -37,7 +37,7 @@ public:
 
 
 	~expression() {};
-	const token_queue  transmute();
+	const queue<token>*  transmute();
 	const string calculate();
 };
 

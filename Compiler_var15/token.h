@@ -28,16 +28,25 @@ class token
 {
 public:
 	
-	
+	/*поумолчанию создается токен с "пустым токеном"*/
 	token() :symbol("empty token"), priority(0), type(-1), associativity(-1) {};
 	~token() = default;
-
+	/*конструктор вызова через операнд и "предыдущий аперанд - число?"*/
 	explicit token(const string & operand,const bool & prev_is_number):symbol(operand),priority(set_priority(operand,prev_is_number)),type(set_type(operand,prev_is_number)),associativity(set_associativity(operand,prev_is_number)) {};
+	/*операторы присваивания черен токен, строку и пару из строки и булевской переменной "предыдущий аперанд - число?" */
+	/*бтв все операторы присваивания ссылаются на первый оператор присваивания с токеном,
+	поэтому в нём нет проверки на самокопирование
+	это необходимо учесть если будете писать код типа token a;token b ;a = b;
+	хоть токен это статичный класс но все же это может привести к последствиям которых я не знаю
 
+	*/
 	token & operator = (const token &);
 	token & operator = (const string &);
 	token & operator = (const pair<string, bool> rh);
+	/*функция присваивания аналогично конструктору*/
 	void set(const string &operand, const bool & prev_is_number);
+
+	//операторы сравнения приоритетов
 	const bool operator ==(const string &);
 	const bool operator ==(const token &);
 	const bool operator ==(const int &);
@@ -66,9 +75,13 @@ public:
 	//проверка на число
 	const bool is_number();
 	
-
+	//функция возврата нашеё лексемы
 	const string get_operand();
+	//функция возврата приоритета
 	const int get_priority();
+	/* вообще эти функции должны возвращать копии объектов во избежение присваивания этим объектам 
+	чего-либо но я верю в вашу сознательность и что вы не будете страдать хернёй
+	*/
 
 private:
 	string
@@ -78,7 +91,7 @@ private:
 		type,// его тип , 1 - бинарная, 0 - унарная,-1 знак препинания
 		associativity;//ассоциативность 1 - левая,0 - правая,-1 знак препинания
 
-
+	//функции определения приоритета типа и асоциативности лексемы необходимые для конструктора
 	int set_priority(const string &, const bool &);
 	int set_type(const string & , const bool &);
 	int set_associativity(const string & , const bool &);
