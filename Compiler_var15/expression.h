@@ -32,7 +32,7 @@ public:
 		const size_t _position;
 	public:
 		exceptions(const char *msg,const size_t &position = 0) :exception(msg),_position(position) {};
-		size_t getPosition() { return this->_position; }
+		const size_t getPosition() { return size_t(_position); }
 	};
 	//конструкторы
 	expression();

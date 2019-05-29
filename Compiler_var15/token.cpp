@@ -151,11 +151,11 @@ const string token::set_type(const string & operand, const bool &prev_is_number)
 		else if (priority7.find(operand) != priority7.end()) {
 			return punctuation_mark;
 		}
-		if (priority1.find(operand) == priority1.end() ||
-			priority2.find(operand) == priority2.end() ||
-			priority3.find(operand) == priority3.end() ||
-			priority4.find(operand) == priority4.end() ||
-			priority5.find(operand) == priority5.end() ||
+		if (priority1.find(operand) == priority1.end() &&
+			priority2.find(operand) == priority2.end() &&
+			priority3.find(operand) == priority3.end() &&
+			priority4.find(operand) == priority4.end() &&
+			priority5.find(operand) == priority5.end() &&
 			priority6.find(operand) == priority6.end()) {
 				return number;
 		}

@@ -72,16 +72,14 @@ const queue<token> * expression::transmute()
 		try
 		{
 			tk = pair<string, bool>(line, prev_is_number);
-			prev_is_number = true;
 		}
 		catch (const std::exception&)
 		{
-			if (map_of_variables == nullptr || !map_of_variables->find(line)->second) {
-				throw exception("Unexpected element at expression::transmute", input.tellg());
+			if (map_of_variables == nullptr || map_of_variables->find(line) == map_of_variables->end()) {
+				throw exceptions("Unexpected element at expression::transmute", input.tellg());
 			}
 			else {
 				tk = pair<string, bool>(to_string(map_of_variables->find(line)->second), prev_is_number);
-				prev_is_number = true;
 			}
 		}
 		//число отправляется в ответ

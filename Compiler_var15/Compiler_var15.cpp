@@ -14,6 +14,14 @@ using namespace std;
 	 добавление переменных ( любое количество)
 	 вывод ОПЗ на экран
 	 Вывод ответа из САЛУ на экран
+
+	 и оформить все красиво чтобы бахта не доебалась
+*/
+
+/*
+	по поводу try catch
+	метод getPosition() не работает если в условии catch стоит const 
+	я хз почему так но это нужно учитывать и мне пока впадлу этим заниматься
 */
 int main()
 {
@@ -21,13 +29,13 @@ int main()
 	{
 		map<string, double> dict;
 		dict.insert(pair<string, double>("a", 1.5));
-		expression a("1 + 2 + a");
+		expression a("a # 2");
 		a.set_variables(dict);
 		a.transmute();
 	}
-	catch (const std::exception& ex)
+	catch (expression::exceptions& ex)
 	{
-		cout << ex.what();
+		cout << ex.what() << ex.getPosition();
 	}
 }
 
