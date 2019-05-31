@@ -41,6 +41,11 @@ expression::expression(const expression & rh):_expression_line(rh._expression_li
 	if (a.empty())throw exceptions("empty expression");
 }
 
+const string expression::operator*()
+{
+	return string(this->_expression_line);
+}
+
 void expression::set_variables(const map<string, double> & dictionary)
 {
 	if (dictionary.empty())throw exceptions("attempt to add empty dectionary");
