@@ -46,6 +46,14 @@ const string expression::operator*()
 	return string(this->_expression_line);
 }
 
+expression & expression::operator=(const string & line)
+{
+	string a(line);
+	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
+	if (a.empty())throw exceptions("empty expression");
+	else _expression_line = line;
+}
+
 void expression::set_variables(const map<string, double> & dictionary)
 {
 	if (dictionary.empty())throw exceptions("attempt to add empty dectionary");
