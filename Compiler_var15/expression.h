@@ -8,7 +8,7 @@
 #include <set>
 #include <list>
 #include <map>
-#include "token_queue.h"
+#include "token.h"
 //#include "token.h"
 using namespace std;
 //возможные операторы
