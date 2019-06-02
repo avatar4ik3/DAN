@@ -154,8 +154,17 @@ const string expression::calculate() {
 		while (_result_queue.empty() != false) {
 			string buff;
 			buff = _result_queue.front();
-			if (buff != "/") {//
-
+			if (buff.length() >= 1 && operators.find(buff) == operators.end()) {
+				try
+				{
+					stod(buff.c_str());
+					result.push(line);
+					prev_is_number = true;
+				}
+				catch (const std::exception&)
+				{
+					throw exceptions("Unexpected token at expression::calculate", input.tellg());
+				}
 			}
 		}
 	}
