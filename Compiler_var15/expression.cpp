@@ -41,6 +41,19 @@ expression::expression(const expression & rh):_expression_line(rh._expression_li
 	if (a.empty())throw exceptions("empty expression");
 }
 
+const string expression::operator*()
+{
+	return string(this->_expression_line);
+}
+
+expression & expression::operator=(const string & line)
+{
+	string a(line);
+	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
+	if (a.empty())throw exceptions("empty expression");
+	else _expression_line = line;
+}
+
 void expression::set_variables(const map<string, double> & dictionary)
 {
 	if (dictionary.empty())throw exceptions("attempt to add empty dectionary");
@@ -147,17 +160,85 @@ const queue<token> * expression::transmute()
 //P.P.P.S я еще поебусь с тем чтобы потом у пользователей просить ввести значения этих переменых и пускать на второй круг но уже со взятыми данными
 //либо сразу просить ввести значения переменных после transmute
 const string expression::calculate() { 
-	/*stack<string> Stack;
-	if (_result_queue.empty() == false) throw exceptions("_result_queue is empty");
-	else {
-		while (_result_queue.empty() != false) {
-			string buff;
-			buff = _result_queue.front();
-			if (buff != "/") {//
+	stack<token> Stack;
+	if (_result_queue == nullptr) {
+		throw exceptions("No pointer\n");
+	}
 
-			}
+	while (!_result_queue->empty())
+	{
+
+		//если число
+		if(_result_queue->front().is_number()) {
+			Stack.push(_result_queue->front());
+			_result_queue->pop();
 		}
-	}*/
+
+		//если унарный плюс
+		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_unary and Stack.size > 0) {
+
+		}
+		else if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_unary() and Stack.size() <= 0) {
+
+		}
+
+		//если бинарный плюс
+		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary and Stack.size() >= 2) {
+
+		}
+		else if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary and Stack.size() < 2) {
+
+		}
+
+		//если унарный минус
+		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_unary and Stack.size > 0) {
+
+		}
+		else if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_unary() and Stack.size() <= 0) {
+
+		}
+
+		//если бинарный минус
+		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary and Stack.size() >= 2) {
+
+		}
+		else if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary and Stack.size() < 2) {
+
+		}
+
+		// если умножение
+		if (_result_queue->front().get_operand() == "*" and Stack.size() >= 2) {
+
+		}
+		else if (_result_queue->front().get_operand() == "*" and Stack.size() < 2) {
+
+		}
+
+		//елси деление
+		if (_result_queue->front().get_operand() == "/" and Stack.size() >= 2) {
+
+		}
+		else if (_result_queue->front().get_operand() == "/" and Stack.size() < 2) {
+
+		}
+
+		//если возведение в степень
+		if (_result_queue->front().get_operand() == "^" and Stack.size() >= 2) {
+
+		}
+		else if(_result_queue->front().get_operand() == "^" and Stack.size() < 2) {
+
+		}
+
+
+		if () {
+
+		}
+
+	}
+	
+
+
 	return "1,2,3";// заглушка
 }
 

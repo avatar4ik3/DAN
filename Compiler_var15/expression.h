@@ -42,6 +42,11 @@ public:
 	expression(const expression&);
 	//деструктор ( •_•)>⌐■-■
 	~expression() = default;
+
+	//разыменователь для доступа к строке
+	const string operator*();
+	//оператор присваивания для строки
+	expression & operator=(const string & line);
 	/*
 		функция запоминания переменных с помощью словаря
 	*/

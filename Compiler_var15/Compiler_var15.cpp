@@ -26,7 +26,7 @@ using namespace std;
 */
 int main()
 {
-	int var;//Для добавления переменной
+	int var;
 	expression sequence;
 	string 
 	string file;// Переменная для чтения из файла
