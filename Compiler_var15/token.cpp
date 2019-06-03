@@ -96,11 +96,16 @@ const bool token:: is_number() {
 	return type == number;
 }
 
+const bool token::is_function()
+{
+	return associativity == function;
+}
+
 const string token::get_operand() {
-	return symbol;
+	return string(symbol);
 }
 const int token::get_priority() {
-	return priority;
+	return int(priority);
 }
 
 
@@ -129,6 +134,9 @@ const int token::set_priority(const string & operand, const bool &prev_is_number
 	if (priority7.find(operand) != priority7.end()) {
 		return 0;
 	}
+	if (prefix.find(operand) != prefix.end()) {
+		return 0;
+	}
 	try
 	{
 		stod(operand.c_str());
@@ -146,6 +154,9 @@ const string token::set_type(const string & operand, const bool &prev_is_number)
 			if (prev_is_number) {
 				return binary_operand;
 			}
+			return unary_operand;
+		}
+		else if (priority1.find(operand) != priority1.end() && operand == "~") {
 			return unary_operand;
 		}
 		else if (priority7.find(operand) != priority7.end()) {
@@ -168,7 +179,7 @@ const string token::set_type(const string & operand, const bool &prev_is_number)
 			}
 		}
 	}
-	return binary_operand;
+	return unary_operand;
 }
 const string token::set_associativity(const string & operand, const bool &prev_is_number) {
 	if (priority0.find(operand) != priority0.end() && !prev_is_number) {
@@ -194,6 +205,9 @@ const string token::set_associativity(const string & operand, const bool &prev_i
 	}
 	if (priority7.find(operand) != priority7.end()) {
 		return punctuation_mark;
+	}
+	if (prefix.find(operand) != prefix.end()) {
+		return function;
 	}
 	try
 	{
