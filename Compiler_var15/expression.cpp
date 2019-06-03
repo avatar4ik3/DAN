@@ -141,11 +141,6 @@ const queue<token> expression::transmute()
 	//проверяем
 	delete _result_queue;
 	_result_queue = new queue<token>(result_queue);
-	while (!result_queue.empty()) {
-		tk = result_queue.front();
-		cout << tk.get_operand() << " ";
-		result_queue.pop();
-	}
 	
 	return result_queue; // верну нормальное потом
 }
