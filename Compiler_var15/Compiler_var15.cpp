@@ -26,27 +26,41 @@ using namespace std;
 */
 int main()
 {
-	token a("frac", false);
 	int var;
-	expression sequence;
+	expression sequence("default sequence");
+	string error;
+	size_t error_position;
 	string file;// Переменная для чтения из файла
-	cout << "Choose type of reading: F1: Keyboard; F2: File; F3: Add var; F4: Write OPZ; F5: Count;  Esc: Exit" << endl;
+	
 	unsigned choice = 0;
 	while (choice != 0x1B) {
+		cout << error << " " << error_position<<endl;
+		cout << "Choose type of reading: F1: Keyboard; F2: File; F3: Add var; F4: Write OPZ; F5: Count;  Esc: Exit" << endl;
+		cout << *sequence;
+		error = "";
+		error_position = -1;
 		choice = _getch();
 		switch (choice)
 		{
 		case 0x3B://f1
 		{
+			try {
+				string name;
+				getline(cin, name);
+				expression sequence(name);
+			}
+			catch (expression::exceptions& ex) {
+				error = ex.what();
+				error_position = ex.getPosition();
+			}
 			break;
 		}
 		case 0x3C://f2
 		{
 			cout << "Write file name: ";
 			cin >> file;
-			file += ".txt";
 			try {
-				expression sequence(file);
+				expression sequence(fstream(file+".txt"));
 			}
 			catch (expression::exceptions& ex) {
 				cout << ex.what() << ex.getPosition();
