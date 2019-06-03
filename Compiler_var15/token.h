@@ -11,12 +11,13 @@ const string unary_operand("unary");
 const string binary_operand("binary");
 const string punctuation_mark("punctuation");
 const string number("number");
+const string function("function");
 
 
 //приоритеты операторов ...
 const set<string> prefix({ "frac","entier" });//префиксные функции, в т.ч. унарный + и - ( содержатс€ в priority 0)
 const set<string> priority0({ "+","-" });// изменение знака переменной
-const set<string> priority1({ "^","~:" }); //возведение в  степень,отрицание, ffjfj
+const set<string> priority1({ "^","~" }); //возведение в  степень,отрицание, ffjfj
 const set<string> priority2({ "*" }); //умножение
 const set<string> priority3({ "/","&" }); //деление и конъюнкиц€ 
 const set<string> priority4({ "+","-" }); // бинарные сложение и вычитание
@@ -74,7 +75,8 @@ public:
 	const bool is_end_operand();
 	//проверка на число
 	const bool is_number();
-	
+	//проверка на функцию
+	const bool is_function();
 	//функци€ возврата нашеЄ лексемы
 	const string get_operand();
 	//функци€ возврата приоритета

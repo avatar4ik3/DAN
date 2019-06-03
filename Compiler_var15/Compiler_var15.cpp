@@ -26,6 +26,7 @@ using namespace std;
 */
 int main()
 {
+	token a("frac", false);
 	int var;
 	expression sequence;
 	string file;// Переменная для чтения из файла
