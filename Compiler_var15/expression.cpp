@@ -2,6 +2,7 @@
 #include<algorithm>
 #include <iostream>
 #include "expression.h"
+#include<cmath>
 using namespace std;
 
 
@@ -176,66 +177,185 @@ const string expression::calculate() {
 
 		//если унарный плюс
 		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_unary() and Stack.size() > 0) {
-
+			double temp = stod(Stack.top().get_operand());
+			Stack.pop();
+			Stack.push(token(to_string(temp), true));
 		}
 		else if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_unary() and Stack.size() <= 0) {
-
+			throw exceptions("Stack doesn't contain any numbers to work with unary +\n");
 		}
 
 		//если бинарный плюс
 		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary() and Stack.size() >= 2) {
-
+			double sum = stod(Stack.top().get_operand());
+			Stack.pop();
+			sum += stod(Stack.top().get_operand());
+			Stack.pop();
+			Stack.push(token(to_string(sum), true));
 		}
 		else if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary() and Stack.size() < 2) {
-
+			throw exceptions("Stack doesn't contain two numbers to work with binary +\n");
 		}
 
 		//если унарный минус
 		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_unary() and Stack.size() > 0) {
-
+			double temp = stod(Stack.top().get_operand());
+			Stack.pop();
+			temp = temp * (-1);
+			Stack.push(token(to_string(temp), true));
 		}
 		else if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_unary() and Stack.size() <= 0) {
-
+			throw exceptions("Stack doesn't contain any numbers to work with unary -\n");
 		}
 
 		//если бинарный минус
 		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary() and Stack.size() >= 2) {
-
+			double min1 = stod(Stack.top().get_operand());
+			Stack.pop();
+			double min2 = stod(Stack.top().get_operand());
+			Stack.pop();
+			double min = min2 - min1;
+			Stack.push(token(to_string(min), true));
 		}
 		else if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary() and Stack.size() < 2) {
-
+			throw exceptions("Stack doesn't contain two numbers to work with binary -\n");
 		}
 
 		// если умножение
 		if (_result_queue->front().get_operand() == "*" and Stack.size() >= 2) {
-
+			double mul = stod(Stack.top().get_operand());
+			Stack.pop();
+			mul *= stod(Stack.top().get_operand());
+			Stack.pop();
+			Stack.push(token(to_string(mul), true));
 		}
 		else if (_result_queue->front().get_operand() == "*" and Stack.size() < 2) {
-
+			throw exceptions("Stack doesn't contain two numbers to work with *\n");
 		}
 
 		//елси деление
 		if (_result_queue->front().get_operand() == "/" and Stack.size() >= 2) {
-
+			double div1 = stod(Stack.top().get_operand());
+			Stack.pop();
+			if(div1 == 0){ throw exceptions("Div by zero\n"); }
+			double div2 = stod(Stack.top().get_operand());
+			Stack.pop();
+			double div = div2/div1;
+			Stack.push(token(to_string(div), true));
 		}
 		else if (_result_queue->front().get_operand() == "/" and Stack.size() < 2) {
-
+			throw exceptions("Stack doesn't contain two numbers to work with /\n");
 		}
 
 		//если возведение в степень
 		if (_result_queue->front().get_operand() == "^" and Stack.size() >= 2) {
-
+			double poww1 = stod(Stack.top().get_operand());
+			Stack.pop();
+			double poww2 = stod(Stack.top().get_operand());
+			Stack.pop();
+			double poww = pow(poww2, poww1);
+			Stack.push(token(to_string(poww), true));
 		}
 		else if(_result_queue->front().get_operand() == "^" and Stack.size() < 2) {
-
+			throw exceptions("Stack doesn't contain two numbers to work with ^\n");
 		}
 
 		//елси <
+		if (_result_queue->front().get_operand() == "<" and Stack.size() >= 2) {
+			double com1 = stod(Stack.top().get_operand());
+			Stack.pop();
+			double com2 = stod(Stack.top().get_operand());
+			Stack.pop();
+			if(com2 < com1) Stack.push(token("1", true));
+			else Stack.push(token("0", true));
+		}
+		else if (_result_queue->front().get_operand() == "<" and Stack.size() < 2) {
+			throw exceptions("Stack doesn't contain two numbers to work with <\n");
+		}
+
+		//если >
+		if (_result_queue->front().get_operand() == ">" and Stack.size() >= 2) {
+			double com1 = stod(Stack.top().get_operand());
+			Stack.pop();
+			double com2 = stod(Stack.top().get_operand());
+			Stack.pop();
+			if (com2 > com1) Stack.push(token("1", true));
+			else Stack.push(token("0", true));
+		}
+		else if (_result_queue->front().get_operand() == ">" and Stack.size() < 2) {
+			throw exceptions("Stack doesn't contain two numbers to work with >\n");
+		}
 		
+		//елси =
+		if (_result_queue->front().get_operand() == "=" and Stack.size() >= 2) {
+			double com1 = stod(Stack.top().get_operand());
+			Stack.pop();
+			double com2 = stod(Stack.top().get_operand());
+			Stack.pop();
+			if (com2 == com1) Stack.push(token("1", true));
+			else Stack.push(token("0", true));
+		}
+		else if (_result_queue->front().get_operand() == "=" and Stack.size() < 2) {
+			throw exceptions("Stack doesn't contain two numbers to work with =\n");
+		}
+
+		//если #
+		if (_result_queue->front().get_operand() == "#" and Stack.size() >= 2) {
+			double com1 = stod(Stack.top().get_operand());
+			Stack.pop();
+			double com2 = stod(Stack.top().get_operand());
+			Stack.pop();
+			if (com2 != com1) Stack.push(token("1", true));
+			else Stack.push(token("0", true));
+		}
+		else if (_result_queue->front().get_operand() == "#" and Stack.size() < 2) {
+			throw exceptions("Stack doesn't contain two numbers to work with #\n");
+		}
+
+		//если ~
+		if (_result_queue->front().get_operand() == "~" and Stack.size() > 0) {
+			double neg = stod(Stack.top().get_operand());
+			Stack.pop();
+			if(neg == 0) Stack.push(token("1", true));
+			else Stack.push(token("0", true));
+		}
+		else if (_result_queue->front().get_operand() == "~" and Stack.size() <= 0) {
+			throw exceptions("Stack doesn't contain two numbers to work with ~\n");
+		}
+
+		//если &
+		if (_result_queue->front().get_operand() == "&" and Stack.size() >= 2) {
+			double con1 = stod(Stack.top().get_operand());
+			Stack.pop();
+			double con2 = stod(Stack.top().get_operand());
+			Stack.pop();
+			if (con1 != 0 and con2 != 0) Stack.push(token("1", true));
+			else Stack.push(token("0", true));
+		}
+		else if (_result_queue->front().get_operand() == "&" and Stack.size() < 2) {
+			throw exceptions("Stack doesn't contain two numbers to work with &\n");
+		}
+
+		//если !
+		if (_result_queue->front().get_operand() == "!" and Stack.size() >= 2) {
+			double dis1 = stod(Stack.top().get_operand());
+			Stack.pop();
+			double dis2 = stod(Stack.top().get_operand());
+			Stack.pop();
+			if (dis1 != 0 or dis2 != 0) Stack.push(token("1", true));
+			else Stack.push(token("0", true));
+		}
+		else if (_result_queue->front().get_operand() == "!" and Stack.size() < 2) {
+			throw exceptions("Stack doesn't contain two numbers to work with !\n");
+		}
+
+
 	}
 	
+	if(Stack.size() > 1) throw exceptions("Invalid Data Entered\n");
+	else {
+		return Stack.top().get_operand();
+	}
 
-
-	return "1,2,3";// заглушка
 }
 
