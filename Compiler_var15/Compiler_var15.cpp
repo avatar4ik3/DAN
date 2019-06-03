@@ -27,8 +27,9 @@ using namespace std;
 int main()
 {
 	int var;
-	expression sequence;
-	string 
+	expression sequence("1,2,3,4;");
+
+	string line;
 	string file;// Переменная для чтения из файла
 	cout << "Choose type of reading: F1: Keyboard; F2: File; F3: Add var; F4: Write OPZ; F5: Count;  Esc: Exit" << endl;
 	unsigned choice = 0;
@@ -38,9 +39,10 @@ int main()
 		{
 		case 0x3B://f1
 		{
-
+			while (){}
 			try {
-				expression sequence(file);
+				getline(cin, line);
+				expression sequence(line);
 			}
 			catch (expression::exceptions& ex) {
 				cout << ex.what() << ex.getPosition();
