@@ -31,7 +31,10 @@ int main()
 	string error;
 	size_t error_position;
 	string file;// Переменная для чтения из файла
-	
+	queue<token> tmp_queue = sequence.transmute();
+	while (!tmp_queue.empty()) {
+		cout << tmp_queue.front().get_operand()<< " ";
+	}
 	unsigned choice = 0;
 	while (choice != 0x1B) {
 		cout << error << " " << error_position<<endl;

@@ -59,7 +59,7 @@ public:
 	/*
 		функция перевода в ОПЗ
 	*/
-	const queue<token>*  transmute();
+	const queue<token>  transmute();
 	/*
 		САЛУ
 	*/

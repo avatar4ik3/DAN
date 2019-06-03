@@ -66,7 +66,7 @@ void expression::add_variable(const pair<string, double>& var)
 	map_of_variables->insert(var);
 }
 
-const queue<token> * expression::transmute()
+const queue<token> expression::transmute()
 {
 	stack<token> tokens;  // стак токенов
 	token tk; //токен для работы 
@@ -147,7 +147,7 @@ const queue<token> * expression::transmute()
 		result_queue.pop();
 	}
 	
-	return _result_queue; // верну нормальное потом
+	return result_queue; // верну нормальное потом
 }
 
 //часть антона
