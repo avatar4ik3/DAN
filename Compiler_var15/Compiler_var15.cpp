@@ -26,8 +26,9 @@ using namespace std;
 */
 int main()
 {
-	int var;
+	int var;//Для добавления переменной
 	expression sequence;
+	string 
 	string file;// Переменная для чтения из файла
 	cout << "Choose type of reading: F1: Keyboard; F2: File; F3: Add var; F4: Write OPZ; F5: Count;  Esc: Exit" << endl;
 	unsigned choice = 0;
@@ -37,15 +38,21 @@ int main()
 		{
 		case 0x3B://f1
 		{
+
+			try {
+				expression sequence(file);
+			}
+			catch (expression::exceptions& ex) {
+				cout << ex.what() << ex.getPosition();
+			}
 			break;
 		}
 		case 0x3C://f2
 		{
 			cout << "Write file name: ";
 			cin >> file;
-			file += ".txt";
 			try {
-				expression sequence(file);
+				expression sequence(fstream(file+".txt"));
 			}
 			catch (expression::exceptions& ex) {
 				cout << ex.what() << ex.getPosition();
