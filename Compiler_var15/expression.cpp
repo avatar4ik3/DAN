@@ -54,6 +54,14 @@ expression & expression::operator=(const string & line)
 	else _expression_line = line;
 }
 
+expression & expression::operator=(fstream input)
+{
+	getline(input, _expression_line);
+	string a(_expression_line);
+	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
+	if (a.empty())throw exceptions("empty expression");
+}
+
 void expression::set_variables(const map<string, double> & dictionary)
 {
 	if (dictionary.empty())throw exceptions("attempt to add empty dectionary");

@@ -47,6 +47,8 @@ public:
 	const string operator*();
 	//оператор присваивания для строки
 	expression & operator=(const string & line);
+	//оператор присваивание для файлов
+	expression & operator=(fstream);
 	/*
 		функция запоминания переменных с помощью словаря
 	*/
