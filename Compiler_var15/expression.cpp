@@ -175,7 +175,7 @@ const string expression::calculate() {
 		}
 
 		//если унарный плюс
-		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_unary and Stack.size > 0) {
+		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_unary() and Stack.size() > 0) {
 
 		}
 		else if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_unary() and Stack.size() <= 0) {
@@ -183,15 +183,15 @@ const string expression::calculate() {
 		}
 
 		//если бинарный плюс
-		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary and Stack.size() >= 2) {
+		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary() and Stack.size() >= 2) {
 
 		}
-		else if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary and Stack.size() < 2) {
+		else if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary() and Stack.size() < 2) {
 
 		}
 
 		//если унарный минус
-		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_unary and Stack.size > 0) {
+		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_unary() and Stack.size() > 0) {
 
 		}
 		else if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_unary() and Stack.size() <= 0) {
@@ -199,10 +199,10 @@ const string expression::calculate() {
 		}
 
 		//если бинарный минус
-		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary and Stack.size() >= 2) {
+		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary() and Stack.size() >= 2) {
 
 		}
-		else if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary and Stack.size() < 2) {
+		else if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary() and Stack.size() < 2) {
 
 		}
 
@@ -230,11 +230,8 @@ const string expression::calculate() {
 
 		}
 
-
-		if () {
-
-		}
-
+		//елси <
+		
 	}
 	
 
