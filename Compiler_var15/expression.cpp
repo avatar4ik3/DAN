@@ -66,7 +66,7 @@ void expression::add_variable(const pair<string, double>& var)
 	map_of_variables->insert(var);
 }
 
-const queue<token> * expression::transmute()
+const queue<token> expression::transmute()
 {
 	stack<token> tokens;  // стак токенов
 	token tk; //токен для работы 
@@ -141,13 +141,8 @@ const queue<token> * expression::transmute()
 	//проверяем
 	delete _result_queue;
 	_result_queue = new queue<token>(result_queue);
-	while (!result_queue.empty()) {
-		tk = result_queue.front();
-		cout << tk.get_operand() << " ";
-		result_queue.pop();
-	}
 	
-	return _result_queue; // верну нормальное потом
+	return result_queue; // верну нормальное потом
 }
 
 //часть антона
@@ -175,7 +170,7 @@ const string expression::calculate() {
 		}
 
 		//если унарный плюс
-		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_unary and Stack.size > 0) {
+		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_unary() and Stack.size() > 0) {
 
 		}
 		else if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_unary() and Stack.size() <= 0) {
@@ -183,15 +178,15 @@ const string expression::calculate() {
 		}
 
 		//если бинарный плюс
-		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary and Stack.size() >= 2) {
+		if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary() and Stack.size() >= 2) {
 
 		}
-		else if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary and Stack.size() < 2) {
+		else if (_result_queue->front().get_operand() == "+" and _result_queue->front().is_binary() and Stack.size() < 2) {
 
 		}
 
 		//если унарный минус
-		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_unary and Stack.size > 0) {
+		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_unary() and Stack.size() > 0) {
 
 		}
 		else if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_unary() and Stack.size() <= 0) {
@@ -199,10 +194,10 @@ const string expression::calculate() {
 		}
 
 		//если бинарный минус
-		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary and Stack.size() >= 2) {
+		if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary() and Stack.size() >= 2) {
 
 		}
-		else if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary and Stack.size() < 2) {
+		else if (_result_queue->front().get_operand() == "-" and _result_queue->front().is_binary() and Stack.size() < 2) {
 
 		}
 
@@ -230,11 +225,8 @@ const string expression::calculate() {
 
 		}
 
-
-		if () {
-
-		}
-
+		//елси <
+		
 	}
 	
 
