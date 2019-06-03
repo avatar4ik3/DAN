@@ -26,12 +26,13 @@ using namespace std;
 */
 int main()
 {
-	int var;
-	expression sequence("default sequence");
+	double var_value = 0;
+	expression sequence("Default Sequence");
+	string var_name = "Default VarName";
 	string error;
 	size_t error_position;
 	string file;// Переменная для чтения из файла
-	
+	queue<token> *tmp_queue = sequence.transmute();
 	unsigned choice = 0;
 	while (choice != 0x1B) {
 		cout << error << " " << error_position<<endl;
@@ -63,16 +64,25 @@ int main()
 				expression sequence(fstream(file+".txt"));
 			}
 			catch (expression::exceptions& ex) {
-				cout << ex.what() << ex.getPosition();
+				error = ex.what();
+				error_position = ex.getPosition();
 			}
 			break;
 		}
 		case 0x3D://f3
 		{
-			cin >> var;
+			try {
+				cout << "Write yours Var Name" << endl;
+				cin >> var_name;
+				cout << "Write yours Var Value" << endl;
+				cin >> var_value;
+				add_variable(pair<string,double>(var_name, var_value));
+			}
+			catch (expression::exceptions& ex) {
+				error = ex.what();
+				error_position = ex.getPosition();
+			}
 			//Тут я вообще хз чо писать тока это
-			// add_variable(var);
-			// set_variable(var)
 			break;
 		}
 		case 0x3E://f4
@@ -81,7 +91,8 @@ int main()
 				sequence.transmute();
 			}
 			catch (expression::exceptions& ex) {
-				cout << ex.what() << ex.getPosition();
+				error = ex.what();
+				error_position = ex.getPosition();
 			}
 			break;
 		}
@@ -91,7 +102,8 @@ int main()
 				sequence.calculate();
 			}
 			catch (expression::exceptions& ex) {
-				cout << ex.what() << ex.getPosition();
+				error = ex.what();
+				error_position = ex.getPosition();
 			}
 			break;
 		}
