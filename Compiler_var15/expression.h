@@ -25,6 +25,11 @@ private:
 	queue<token> *_result_queue;
 	//словарь для возможности работы с переменными
 	map<string, double> *map_of_variables;
+
+	/*
+		функция перевода в ОПЗ
+	*/
+	const queue<token>  transmute();
 public:
 	//класс ислючений с возможностью указать позицию исключения
 	class exceptions:public exception {
@@ -40,7 +45,7 @@ public:
 	expression(string &);
 	expression(const char*);
 	expression(const expression&);
-	//деструктор ( •_•)>⌐■-■
+	//деструктор ( •_•)>⌐■-■ (￣y▽,￣)╭ 
 	~expression() = default;
 
 	//разыменователь для доступа к строке
@@ -57,14 +62,19 @@ public:
 		функция запоминания переменых с помощью пары
 	*/
 	void add_variable(const pair<string, double>&);
-
 	/*
-		функция перевода в ОПЗ
+	функция возвращающая копию на словарь переменных
 	*/
-	const queue<token>  transmute();
+	const map<string, double>  get_map_of_variables();
+	/*
+		функция удаляющая элемент словаря
+	*/
+	void erase(const string & name);
 	/*
 		САЛУ
 	*/
 	const string calculate();
+
+	
 };
 

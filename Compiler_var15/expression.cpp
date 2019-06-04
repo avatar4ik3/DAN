@@ -8,12 +8,12 @@ using namespace std;
 
 
 
-expression::expression():_expression_line(""),map_of_variables(nullptr),_result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression():_expression_line(""),map_of_variables(new map<string, double>),_result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	throw exceptions("empty expression");
 }
 
-expression::expression(fstream input): map_of_variables(nullptr), _result_queue(nullptr)//:operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' }) 
+expression::expression(fstream input): map_of_variables(new map<string, double>), _result_queue(nullptr)//:operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' }) 
 {
 	getline(input, _expression_line);
 	string a(_expression_line); 
@@ -21,21 +21,21 @@ expression::expression(fstream input): map_of_variables(nullptr), _result_queue(
 	if (a.empty())throw exceptions("empty expression");
  }
 
-expression::expression(string & str):_expression_line(str), map_of_variables(nullptr), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression(string & str):_expression_line(str), map_of_variables(new map<string, double>), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	string a(_expression_line);
 	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
 	if (a.empty())throw exceptions("empty expression");
 }
 
-expression::expression(const char *str):_expression_line(str), map_of_variables(nullptr), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression(const char *str):_expression_line(str), map_of_variables(new map<string, double>), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	string a(_expression_line);
 	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
 	if (a.empty())throw exceptions("empty expression");
 }
 
-expression::expression(const expression & rh):_expression_line(rh._expression_line), map_of_variables(nullptr), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression(const expression & rh):_expression_line(rh._expression_line), map_of_variables(new map<string,double>), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	string a(_expression_line);
 	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
@@ -72,7 +72,20 @@ void expression::set_variables(const map<string, double> & dictionary)
 
 void expression::add_variable(const pair<string, double>& var)
 {
+	if (map_of_variables == nullptr) {
+		map_of_variables = new map<string, double>;
+	}
 	map_of_variables->insert(var);
+}
+
+const map<string, double> expression::get_map_of_variables()
+{
+	if(map_of_variables != nullptr)return map<string, double>(map_of_variables);
+}
+
+void expression::erase(const string & name)
+{
+	map_of_variables->erase(name);
 }
 
 const queue<token> expression::transmute()
@@ -164,6 +177,14 @@ const queue<token> expression::transmute()
 //P.P.P.S я еще поебусь с тем чтобы потом у пользователей просить ввести значения этих переменых и пускать на второй круг но уже со взятыми данными
 //либо сразу просить ввести значения переменных после transmute
 const string expression::calculate() { 
+	try
+	{
+		this->transmute();
+	}
+	catch (expression::exceptions& ex)
+	{
+		throw exceptions(ex.what(), ex.getPosition());
+	}
 	stack<token> Stack;
 	if (_result_queue == nullptr) {
 		throw exceptions("No pointer\n");

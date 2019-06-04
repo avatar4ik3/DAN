@@ -7,8 +7,9 @@
 #include <conio.h>
 #include "expression.h"
 
-
 using namespace std;
+
+
 /*
 	 в мейне:
 	 создание / считывание строки
@@ -39,7 +40,12 @@ int main()
 		cout << "Result:" << saver << endl;
 		cout << error << " " << error_position<<endl;
 		cout << *sequence << endl;
-		cout << "Choose type of reading: F1: Keyboard; F2: File; F3: Add var; F4: Write OPZ; F5: Count;  Esc: Exit" << endl;
+		cout << "Choose type of reading: F1: Keyboard; F2: File; F3: Add var; F4: del var; F5: Count;  Esc: Exit" << endl;
+		cout << "Current variables are:" << endl;
+		for(auto var : sequence.get_map_of_variables() )
+		{
+			cout << var.first << " is " << var.second << endl;
+		}
 		error = "";
 		saver = "";
 		error_position = 0;
@@ -65,7 +71,7 @@ int main()
 			cout << "Write file name: ";
 			cin >> file;
 			try {
-				expression sequence(fstream(file+".txt"));
+				sequence = fstream(file+".txt");
 			}
 			catch (expression::exceptions& ex) {
 				error = ex.what();
@@ -80,6 +86,7 @@ int main()
 				cin >> var_name;
 				cout << "Write yours Var Value" << endl;
 				cin >> var_value;
+				if (cin.fail())rewind(stdin);
 				sequence.add_variable(pair<string,double>(var_name, var_value));
 			}
 			catch (expression::exceptions& ex) {
@@ -91,24 +98,20 @@ int main()
 		}
 		case 0x3E://f4
 		{
-			try {
-				queue<token> tmp = sequence.transmute();
-				while (!tmp.empty()) {
-					saver = saver + tmp.front().get_operand() + " ";
-					tmp.pop();
-				}
+			cout << "type name of variable to delete" << endl;
+			string name;
+			cin>>name;
+			if (cin.fail()) {
+				rewind(stdin);
+				break;
 			}
-			catch (expression::exceptions& ex) {
-				error = ex.what();
-				error_position = ex.getPosition();
-			}
-
+			sequence.erase(name);
 			break;
 		}
 		case 0x3F://f5
 		{
 			try {
-				saver=sequence.calculate();
+				saver = sequence.calculate();
 			}
 			catch (expression::exceptions& ex) {
 				error = ex.what();
@@ -116,6 +119,7 @@ int main()
 			}
 			break;
 		}
+
 		default:
 			break;
 		}
