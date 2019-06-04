@@ -30,17 +30,20 @@ int main()
 	double var_value = 0;
 	expression sequence("Default Sequence");
 	string var_name = "Default VarName";
-	string error = "";
-	size_t error_position = 0;
+	string error("");
+	size_t error_position(0);
 	string file;// Переменная для чтения из файла
+	string saver("");
 	unsigned choice = 0;
 	while (choice != 0x1B) {
 		system("cls");
-		cout << "Result:" << saver << endl;
 		cout << error << " " << error_position<<endl;
 		cout << *sequence << endl;
 		cout << "Choose type of reading: F1: Keyboard; F2: File; F3: Add var; F4: Write OPZ; F5: Count;  Esc: Exit" << endl;
+		cout << *sequence;
+		cout << endl << saver;
 		error = "";
+		saver = "";
 		error_position = 0;
 		choice = _getch();
 		saver = "";
@@ -49,6 +52,7 @@ int main()
 		case 0x3B://f1
 		{
 			try {
+				cout << endl << "type your expression" << endl;
 				string name;
 				getline(cin, name);
 				sequence = name;
@@ -91,10 +95,11 @@ int main()
 		case 0x3E://f4
 		{
 			try {
-				queue<token> tmp_queue = sequence.transmute();
-				while (!tmp_queue.empty()) {
-					cout << tmp_queue.front().get_operand() << " ";// Не удаляет элементов из очереди из-за этого бесконечный цикл
-				}
+				queue<token> tmp = sequence.transmute();
+				/*while (!tmp.empty()) {
+					saver = saver + tmp.front().get_operand() + " ";
+					tmp.pop();
+				}*/
 			}
 			catch (expression::exceptions& ex) {
 				error = ex.what();
@@ -106,7 +111,7 @@ int main()
 		case 0x3F://f5
 		{
 			try {
-				saver = sequence.calculate();
+				saver=sequence.calculate();
 			}
 			catch (expression::exceptions& ex) {
 				error = ex.what();
