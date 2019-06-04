@@ -26,24 +26,24 @@ using namespace std;
 */
 int main()
 {
+	string saver = "";
 	double var_value = 0;
 	expression sequence("Default Sequence");
 	string var_name = "Default VarName";
-	string error;
-	size_t error_position;
+	string error = "";
+	size_t error_position = 0;
 	string file;// Переменная для чтения из файла
-	queue<token> tmp_queue = sequence.transmute();
-	while (!tmp_queue.empty()) {
-		cout << tmp_queue.front().get_operand()<< " ";
-	}
 	unsigned choice = 0;
 	while (choice != 0x1B) {
+		system("cls");
+		cout << "Result:" << saver << endl;
 		cout << error << " " << error_position<<endl;
+		cout << *sequence << endl;
 		cout << "Choose type of reading: F1: Keyboard; F2: File; F3: Add var; F4: Write OPZ; F5: Count;  Esc: Exit" << endl;
-		cout << *sequence;
 		error = "";
-		error_position = -1;
+		error_position = 0;
 		choice = _getch();
+		saver = "";
 		switch (choice)
 		{
 		case 0x3B://f1
@@ -51,7 +51,7 @@ int main()
 			try {
 				string name;
 				getline(cin, name);
-				expression sequence(name);
+				sequence = name;
 			}
 			catch (expression::exceptions& ex) {
 				error = ex.what();
@@ -79,30 +79,34 @@ int main()
 				cin >> var_name;
 				cout << "Write yours Var Value" << endl;
 				cin >> var_value;
-				add_variable(pair<string,double>(var_name, var_value));
+				sequence.add_variable(pair<string,double>(var_name, var_value));
 			}
 			catch (expression::exceptions& ex) {
 				error = ex.what();
 				error_position = ex.getPosition();
 			}
-			//Тут я вообще хз чо писать тока это
+			// Выдает ошибку "Нарушение доступа для чтения"
 			break;
 		}
 		case 0x3E://f4
 		{
 			try {
-				sequence.transmute();
+				queue<token> tmp_queue = sequence.transmute();
+				while (!tmp_queue.empty()) {
+					cout << tmp_queue.front().get_operand() << " ";// Не удаляет элементов из очереди из-за этого бесконечный цикл
+				}
 			}
 			catch (expression::exceptions& ex) {
 				error = ex.what();
 				error_position = ex.getPosition();
 			}
+
 			break;
 		}
 		case 0x3F://f5
 		{
 			try {
-				sequence.calculate();
+				saver = sequence.calculate();
 			}
 			catch (expression::exceptions& ex) {
 				error = ex.what();
@@ -114,17 +118,5 @@ int main()
 			break;
 		}
 	}
-	/*try
-	{
-		map<string, double> dict;
-		dict.insert(pair<string, double>("a", 1.5));
-		expression a("#");
-		a.set_variables(dict);
-		a.transmute();
-	}
-	catch (expression::exceptions& ex)
-	{
-		cout << ex.what() << ex.getPosition();
-	}*/
 }
 	
