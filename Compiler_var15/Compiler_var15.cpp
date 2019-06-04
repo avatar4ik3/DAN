@@ -26,7 +26,6 @@ using namespace std;
 */
 int main()
 {
-	string saver = "";
 	double var_value = 0;
 	expression sequence("Default Sequence");
 	string var_name = "Default VarName";
@@ -37,16 +36,14 @@ int main()
 	unsigned choice = 0;
 	while (choice != 0x1B) {
 		system("cls");
+		cout << "Result:" << saver << endl;
 		cout << error << " " << error_position<<endl;
 		cout << *sequence << endl;
 		cout << "Choose type of reading: F1: Keyboard; F2: File; F3: Add var; F4: Write OPZ; F5: Count;  Esc: Exit" << endl;
-		cout << *sequence;
-		cout << endl << saver;
 		error = "";
 		saver = "";
 		error_position = 0;
 		choice = _getch();
-		saver = "";
 		switch (choice)
 		{
 		case 0x3B://f1
@@ -96,10 +93,10 @@ int main()
 		{
 			try {
 				queue<token> tmp = sequence.transmute();
-				/*while (!tmp.empty()) {
+				while (!tmp.empty()) {
 					saver = saver + tmp.front().get_operand() + " ";
 					tmp.pop();
-				}*/
+				}
 			}
 			catch (expression::exceptions& ex) {
 				error = ex.what();

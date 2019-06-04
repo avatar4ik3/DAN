@@ -54,7 +54,7 @@ public:
 	*/
 	void set_variables(const map<string,double> &);
 	/*
-		функция запоминания переменых с помозью пары
+		функция запоминания переменых с помощью пары
 	*/
 	void add_variable(const pair<string, double>&);
 
