@@ -126,7 +126,11 @@ const queue<token> expression::transmute()
 			//если поствикс то в ответ(таких функций нет)
 			//если префикс то в стек
 			//если открывающая скобка то в стек
-			if (tk.is_unary() || tk.is_opened_bracket()) {
+			if (tk.is_unary()) {
+				tokens.push(tk);
+				prev_is_number = false;
+			}
+			if (tk.is_opened_bracket()) {
 				tokens.push(tk);
 			}
 			//если закрывающая то выталкиваем в ответ до открывающей
@@ -151,8 +155,9 @@ const queue<token> expression::transmute()
 					tokens.pop();
 				}
 				tokens.push(tk);
+				prev_is_number = false;
 			}
-			prev_is_number = false;
+			
 		}
 	}
 	//пока остались операнды выкидываем их в ответ
@@ -165,15 +170,7 @@ const queue<token> expression::transmute()
 	return result_queue; // верну нормальное потом
 }
 
-//часть антона
-//П.С ТОоха юзай throw exceptions(string,position) для выброса исключений
-//P.P.S нужно так же учесть что в токене есть тип variable (переменная) и ответ нужно давать с учетем их
-//например если было 2 a + то ответ будет a + 2
-//именно поэтому возращаем строку а не ответ
-//если переменных нет то ответом должно быть число
-//то есть нужно знать возможно ли получить внятный ответ,но вообще можно не ебаться и воспользоваться методами класса токен
-//P.P.P.S я еще поебусь с тем чтобы потом у пользователей просить ввести значения этих переменых и пускать на второй круг но уже со взятыми данными
-//либо сразу просить ввести значения переменных после transmute
+
 const string expression::calculate() { 
 	queue<token> _result_queue;
 	try
@@ -402,6 +399,29 @@ const string expression::calculate() {
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with !\n");
+			}
+		}
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "frac") {
+			if (Stack.size() > 0) {
+				double tmp = stod(Stack.top().get_operand());
+				Stack.pop();
+				double *tmp_val = new double(0);
+				Stack.push(token(to_string(modf(tmp, tmp_val)),true));
+				_result_queue.pop();
+			}
+			else {
+				throw exceptions("Stack doesn't contain any numbers to work with unary -\n");
+			}
+		}
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "entier") {
+			if (Stack.size() > 0) {
+				double tmp = stod(Stack.top().get_operand());
+				Stack.pop();
+				Stack.push(token(to_string(floor(tmp)), true));
+				_result_queue.pop();
+			}
+			else {
+				throw exceptions("Stack doesn't contain any numbers to work with unary -\n");
 			}
 		}
 
