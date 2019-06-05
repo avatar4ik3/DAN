@@ -9,12 +9,11 @@
 #include <list>
 #include <map>
 #include "token.h"
-//#include "token.h"
 using namespace std;
 //возможные операторы
 const set<string> operators({ "^","~:","+","-","*","/","&","<",">","=","#","!",";","(",")","entier","frac" });
 
-//Денис: я хз почему конъюнкия(&) и дизъюнкция(!) отдельно от всех и настолько далеко и почему отрицание это тильта(и тильт тоже) (╯°□°）╯︵ ┻━┻ 
+
 class expression
 {
 private:
@@ -43,7 +42,7 @@ public:
 	expression(string &);
 	expression(const char*);
 	expression(const expression&);
-	//деструктор ( •_•)>⌐■-■ (￣y▽,￣)╭ 
+	//деструктор 
 	~expression() = default;
 
 	//разыменователь для доступа к строке
