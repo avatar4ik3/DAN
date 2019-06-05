@@ -21,8 +21,6 @@ private:
 	/*переменные необходимые для работы компилятора*/
 	//само выражение
 	string _expression_line;
-	//выражение в опз
-	queue<token> *_result_queue;
 	//словарь для возможности работы с переменными
 	map<string, double> *map_of_variables;
 

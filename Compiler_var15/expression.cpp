@@ -8,12 +8,12 @@ using namespace std;
 
 
 
-expression::expression():_expression_line(""),map_of_variables(new map<string, double>),_result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression():_expression_line(""),map_of_variables(new map<string, double>)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	throw exceptions("empty expression");
 }
 
-expression::expression(fstream input): map_of_variables(new map<string, double>), _result_queue(nullptr)//:operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' }) 
+expression::expression(fstream input): map_of_variables(new map<string, double>)//:operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' }) 
 {
 	getline(input, _expression_line);
 	string a(_expression_line); 
@@ -21,21 +21,21 @@ expression::expression(fstream input): map_of_variables(new map<string, double>)
 	if (a.empty())throw exceptions("empty expression");
  }
 
-expression::expression(string & str):_expression_line(str), map_of_variables(new map<string, double>), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression(string & str):_expression_line(str), map_of_variables(new map<string, double>)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	string a(_expression_line);
 	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
 	if (a.empty())throw exceptions("empty expression");
 }
 
-expression::expression(const char *str):_expression_line(str), map_of_variables(new map<string, double>), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression(const char *str):_expression_line(str), map_of_variables(new map<string, double>)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	string a(_expression_line);
 	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
 	if (a.empty())throw exceptions("empty expression");
 }
 
-expression::expression(const expression & rh):_expression_line(rh._expression_line), map_of_variables(new map<string,double>), _result_queue(nullptr)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
+expression::expression(const expression & rh):_expression_line(rh._expression_line), map_of_variables(new map<string,double>)//,operators({ '^','~',"+","-","*","/",'&','<','>','=','#','!' })
 {
 	string a(_expression_line);
 	a.erase(std::remove(a.begin(), a.end(), ' '), a.end());
@@ -80,7 +80,7 @@ void expression::add_variable(const pair<string, double>& var)
 
 const map<string, double> expression::get_map_of_variables()
 {
-	if(map_of_variables != nullptr)return map<string, double>(map_of_variables);
+	if(map_of_variables != nullptr)return map<string, double>(*map_of_variables);
 }
 
 void expression::erase(const string & name)
@@ -161,8 +161,6 @@ const queue<token> expression::transmute()
 		tokens.pop();
 	}
 	//проверяем
-	delete _result_queue;
-	_result_queue = new queue<token>(result_queue);
 	
 	return result_queue; // верну нормальное потом
 }
@@ -177,62 +175,63 @@ const queue<token> expression::transmute()
 //P.P.P.S я еще поебусь с тем чтобы потом у пользователей просить ввести значения этих переменых и пускать на второй круг но уже со взятыми данными
 //либо сразу просить ввести значения переменных после transmute
 const string expression::calculate() { 
+	queue<token> _result_queue;
 	try
 	{
-		this->transmute();
+		_result_queue = this->transmute();
 	}
 	catch (expression::exceptions& ex)
 	{
 		throw exceptions(ex.what(), ex.getPosition());
 	}
 	stack<token> Stack;
-	if (_result_queue == nullptr) {
+	if (_result_queue.empty()) {
 		throw exceptions("No pointer\n");
 	}
 
-	while (!_result_queue->empty())
+	while (!_result_queue.empty())
 	{
 
 		//если число
-		if(_result_queue->front().is_number()) {
-			Stack.push(_result_queue->front());
-			_result_queue->pop();
+		if(_result_queue.front().is_number()) {
+			Stack.push(_result_queue.front());
+			_result_queue.pop();
 		}
 
 		//если унарный плюс
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "+" and _result_queue->front().is_unary()) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "+" and _result_queue.front().is_unary()) {
 			if (Stack.size() > 0) {
 				double temp = stod(Stack.top().get_operand());
 				Stack.pop();
 				Stack.push(token(to_string(temp), true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain any numbers to work with unary +\n");
 			}
 		}
 		//если бинарный плюс
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "+" and _result_queue->front().is_binary()) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "+" and _result_queue.front().is_binary()) {
 			if (Stack.size() >= 2) {
 				double sum = stod(Stack.top().get_operand());
 				Stack.pop();
 				sum += stod(Stack.top().get_operand());
 				Stack.pop();
 				Stack.push(token(to_string(sum), true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with binary +\n");
 			}
 		}
 		//если унарный минус
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "-" and _result_queue->front().is_unary()) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "-" and _result_queue.front().is_unary()) {
 			if (Stack.size() > 0) {
 				double temp = stod(Stack.top().get_operand());
 				Stack.pop();
 				temp = temp * (-1);
 				Stack.push(token(to_string(temp), true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain any numbers to work with unary -\n");
@@ -240,7 +239,7 @@ const string expression::calculate() {
 		}
 
 		//если бинарный минус
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "-" and _result_queue->front().is_binary() ) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "-" and _result_queue.front().is_binary() ) {
 			if (Stack.size() >= 2) {
 				double min1 = stod(Stack.top().get_operand());
 				Stack.pop();
@@ -248,21 +247,21 @@ const string expression::calculate() {
 				Stack.pop();
 				double min = min2 - min1;
 				Stack.push(token(to_string(min), true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with binary -\n");
 			}
 		}
 		// если умножение
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "*" ) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "*" ) {
 			if (Stack.size() >= 2) {
 				double mul = stod(Stack.top().get_operand());
 				Stack.pop();
 				mul *= stod(Stack.top().get_operand());
 				Stack.pop();
 				Stack.push(token(to_string(mul), true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with *\n");
@@ -270,7 +269,7 @@ const string expression::calculate() {
 		}
 
 		//елси деление
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "/" ) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "/" ) {
 			if (Stack.size() >= 2) {
 				double div1 = stod(Stack.top().get_operand());
 				Stack.pop();
@@ -279,14 +278,14 @@ const string expression::calculate() {
 				Stack.pop();
 				double div = div2 / div1;
 				Stack.push(token(to_string(div), true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with /\n");
 			}
 		}
 		//если возведение в степень
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "^") {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "^") {
 			if (Stack.size() >= 2) {
 				double poww1 = stod(Stack.top().get_operand());
 				Stack.pop();
@@ -294,7 +293,7 @@ const string expression::calculate() {
 				Stack.pop();
 				double poww = pow(poww2, poww1);
 				Stack.push(token(to_string(poww), true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with ^\n");
@@ -302,7 +301,7 @@ const string expression::calculate() {
 		}
 
 		//елси <
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "<" ) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "<" ) {
 			if (Stack.size() >= 2) {
 				double com1 = stod(Stack.top().get_operand());
 				Stack.pop();
@@ -310,7 +309,7 @@ const string expression::calculate() {
 				Stack.pop();
 				if (com2 < com1) Stack.push(token("1", true));
 				else Stack.push(token("0", true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with <\n");
@@ -318,7 +317,7 @@ const string expression::calculate() {
 		}
 
 		//если >
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == ">" ) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == ">" ) {
 			if ( Stack.size() >= 2) {
 				double com1 = stod(Stack.top().get_operand());
 				Stack.pop();
@@ -326,14 +325,14 @@ const string expression::calculate() {
 				Stack.pop();
 				if (com2 > com1) Stack.push(token("1", true));
 				else Stack.push(token("0", true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with >\n");
 			}
 		}
 		//елси =
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "=") {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "=") {
 			if (Stack.size() >= 2) {
 				double com1 = stod(Stack.top().get_operand());
 				Stack.pop();
@@ -341,14 +340,14 @@ const string expression::calculate() {
 				Stack.pop();
 				if (com2 == com1) Stack.push(token("1", true));
 				else Stack.push(token("0", true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with =\n");
 			}
 		}
 		//если #
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "#" ) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "#" ) {
 			if (Stack.size() >= 2) {
 				double com1 = stod(Stack.top().get_operand());
 				Stack.pop();
@@ -356,26 +355,26 @@ const string expression::calculate() {
 				Stack.pop();
 				if (com2 != com1) Stack.push(token("1", true));
 				else Stack.push(token("0", true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with #\n");
 			}
 		}
 		//если ~
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "~" and Stack.size() > 0) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "~" and Stack.size() > 0) {
 			double neg = stod(Stack.top().get_operand());
 			Stack.pop();
 			if(neg == 0) Stack.push(token("1", true));
 			else Stack.push(token("0", true));
-			_result_queue->pop();
+			_result_queue.pop();
 		}
-		else if (!_result_queue->empty() and _result_queue->front().get_operand() == "~" and Stack.size() <= 0) {
+		else if (!_result_queue.empty() and _result_queue.front().get_operand() == "~" and Stack.size() <= 0) {
 			throw exceptions("Stack doesn't contain two numbers to work with ~\n");
 		}
 
 		//если &
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "&" ) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "&" ) {
 			if (Stack.size() >= 2) {
 				double con1 = stod(Stack.top().get_operand());
 				Stack.pop();
@@ -383,7 +382,7 @@ const string expression::calculate() {
 				Stack.pop();
 				if (con1 != 0 and con2 != 0) Stack.push(token("1", true));
 				else Stack.push(token("0", true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with &\n");
@@ -391,7 +390,7 @@ const string expression::calculate() {
 		}
 
 		//если !
-		if (!_result_queue->empty() and _result_queue->front().get_operand() == "!" ) {
+		if (!_result_queue.empty() and _result_queue.front().get_operand() == "!" ) {
 			if (Stack.size() >= 2) {
 				double dis1 = stod(Stack.top().get_operand());
 				Stack.pop();
@@ -399,7 +398,7 @@ const string expression::calculate() {
 				Stack.pop();
 				if (dis1 != 0 or dis2 != 0) Stack.push(token("1", true));
 				else Stack.push(token("0", true));
-				_result_queue->pop();
+				_result_queue.pop();
 			}
 			else {
 				throw exceptions("Stack doesn't contain two numbers to work with !\n");
